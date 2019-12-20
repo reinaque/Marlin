@@ -12,10 +12,10 @@
 //#define MachineCR20Pro
 //#define MachineCR10S
 //#define MachineCR10SV2
-//#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
+#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
 //#define MachineCR10SProV2 // Second Gen 10S Pro with BLTouch wired to Z Max
 //#define MachineCRX
-#define MachineCR10Max
+//#define MachineCR10Max
 //#define MachineS4
 //#define MachineS5
 //#define MachineCR2020 // Industrial Series 2020
@@ -94,7 +94,7 @@
 
 // Touchscreen options - only 32 bit boards have the open serial ports to use with graphics displays above
 //#define ForceCRXDisplay
-#define Force10SProDisplay
+//#define Force10SProDisplay
 
 //#define AddonFilSensor //Adds a filamnt runout sensor to the CR20 or Ender 4
 //#define lerdgeFilSensor //Using lerdge filament sensor, which is opposite polarity to stock
@@ -386,6 +386,9 @@
  #define DirectDrive
 #endif
 
+#if ENABLED(MachineCR10Orig, ABL_BI)
+  #define LowMemoryBoard
+#endif
 //Show the Marlin bootscreen on startup. ** ENABLE FOR PRODUCTION **
 
 #if NONE(MachineCR10Orig, MachineEnder4, MachineCR10SPro, MachineCRX, MachineCR10Max, MachineEnder5Plus) || ENABLED(GraphicLCD)
@@ -2492,8 +2495,8 @@
  * just remove some extraneous menu items to recover space.
  */
 #if ENABLED(MachineCR10Orig)
-  #define NO_LCD_MENUS
-  //#define SLIM_LCD_MENUS
+  //#define NO_LCD_MENUS
+  #define SLIM_LCD_MENUS
 #endif
 
 //
