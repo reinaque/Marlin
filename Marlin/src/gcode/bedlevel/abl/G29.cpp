@@ -228,7 +228,7 @@ G29_TYPE GcodeSuite::G29() {
       ABL_VAR xy_int8_t meshCount;
     #endif
 
-    ABL_VAR xy_float_t probe_position_lf, probe_position_rb;
+    ABL_VAR xy_pos_t probe_position_lf, probe_position_rb;
     ABL_VAR xy_float_t gridSpacing = { 0, 0 };
 
     #if ENABLED(AUTO_BED_LEVELING_LINEAR)
@@ -403,12 +403,12 @@ G29_TYPE GcodeSuite::G29() {
       }
       else {
         probe_position_lf.set(
-          parser.seenval('L') ? (int)RAW_X_POSITION(parser.value_linear_units()) : (_MAX(X_CENTER - (X_BED_SIZE) / 2,      x_min) + MIN_PROBE_EDGE_LEFT),
-          parser.seenval('F') ? (int)RAW_Y_POSITION(parser.value_linear_units()) : (_MAX(Y_CENTER - (Y_BED_SIZE) / 2,      y_min) + MIN_PROBE_EDGE_FRONT)
+          parser.seenval('L') ? RAW_X_POSITION(parser.value_linear_units()) : x_min,
+          parser.seenval('F') ? RAW_Y_POSITION(parser.value_linear_units()) : y_min
         );
         probe_position_rb.set(
-          parser.seenval('R') ? (int)RAW_X_POSITION(parser.value_linear_units()) : (_MIN(probe_position_lf.x + X_BED_SIZE, x_max) - MIN_PROBE_EDGE_RIGHT),
-          parser.seenval('B') ? (int)RAW_Y_POSITION(parser.value_linear_units()) : (_MIN(probe_position_lf.y + Y_BED_SIZE, y_max) - MIN_PROBE_EDGE_RIGHT)
+          parser.seenval('R') ? RAW_X_POSITION(parser.value_linear_units()) : x_max,
+          parser.seenval('B') ? RAW_Y_POSITION(parser.value_linear_units()) : y_max
         );
       }
 
