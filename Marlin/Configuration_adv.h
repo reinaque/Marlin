@@ -658,8 +658,9 @@
    * differs, a mode set eeprom write will be completed at initialization.
    * Use the option below to force an eeprom write to a V3.1 probe regardless.
    */
-  #define BLTOUCH_SET_5V_MODE
-
+  #if NONE(SKR13, SKRPRO11)
+    #define BLTOUCH_SET_5V_MODE
+  #endif
   /**
    * Safety: Activate if connecting a probe with an unknown voltage mode.
    * V3.0: Set a probe into mode selected above at Marlin startup. Required for 5V mode on 3.0
@@ -772,7 +773,9 @@
 // Backlash Compensation
 // Adds extra movement to axes on direction-changes to account for backlash.
 //
-//#define BACKLASH_COMPENSATION
+#if ANY(SKR13, SKRPRO11)
+  #define BACKLASH_COMPENSATION
+#endif
 #if ENABLED(BACKLASH_COMPENSATION)
   // Define values for backlash distance and correction.
   // If BACKLASH_GCODE is enabled these values are the defaults.
@@ -784,7 +787,7 @@
   //#define BACKLASH_SMOOTHING_MM 3 // (mm)
 
   // Add runtime configuration and tuning of backlash values (M425)
-  //#define BACKLASH_GCODE
+  #define BACKLASH_GCODE
 
   #if ENABLED(BACKLASH_GCODE)
     // Measure the Z backlash when probing (G29) and set with "M425 Z"
@@ -860,7 +863,9 @@
  * vibration and surface artifacts. The algorithm adapts to provide the best possible step smoothing at the
  * lowest stepping frequencies.
  */
-//#define ADAPTIVE_STEP_SMOOTHING
+#if ANY(SKR13, SKRPRO11)
+  #define ADAPTIVE_STEP_SMOOTHING
+#endif
 
 /**
  * Custom Microstepping
@@ -1222,7 +1227,7 @@
  */
 #if HAS_GRAPHICAL_LCD
   // Show SD percentage next to the progress bar
-  //#define DOGM_SD_PERCENT
+  #define DOGM_SD_PERCENT
 
   // Enable to save many cycles by drawing a hollow frame on the Info Screen
   #define XYZ_HOLLOW_FRAME
@@ -1232,7 +1237,9 @@
 
   // A bigger font is available for edit items. Costs 3120 bytes of PROGMEM.
   // Western only. Not available for Cyrillic, Kana, Turkish, Greek, or Chinese.
-  //#define USE_BIG_EDIT_FONT
+  #if ANY(SKR13, SKRPRO11)
+  #define USE_BIG_EDIT_FONT
+  #endif
 
   // A smaller font may be used on the Info Screen. Costs 2300 bytes of PROGMEM.
   // Western only. Not available for Cyrillic, Kana, Turkish, Greek, or Chinese.
@@ -1284,11 +1291,14 @@
   //#define STATUS_FAN_FRAMES 3       // :[0,1,2,3,4] Number of fan animation frames
   //#define STATUS_HEAT_PERCENT       // Show heating in a progress bar
   //#define BOOT_MARLIN_LOGO_SMALL    // Show a smaller Marlin logo on the Boot Screen (saving 399 bytes of flash)
-  //#define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~‭3260 (or ~940) bytes of PROGMEM.
-  #define BOOT_MARLIN_LOGO_SMALL    // Show a smaller Marlin logo on the Boot Screen (saving 399 bytes of flash)
+  #if ANY(SKR13, SKRPRO11)
+    #define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~‭3260 (or ~940) bytes of PROGMEM.
+  #else
+    #define BOOT_MARLIN_LOGO_SMALL    // Show a smaller Marlin logo on the Boot Screen (saving 399 bytes of flash)
+  #endif
   //#define GAMES_EASTER_EGG          // Add extra blank lines above the "Games" sub-menu
 
-  #if ENABLED(SKR13, SKRPRO11)
+  #if ANY(SKR13, SKRPRO11)
     // Frivolous Game Options
     #define MARLIN_BRICKOUT
     #define MARLIN_INVADERS
@@ -1609,7 +1619,7 @@
  * Override the default value based on the driver type set in Configuration.h.
  */
 #if ENABLED(SKR13, SKRPRO11)
-  #define MINIMUM_STEPPER_PULSE 1
+  //#define MINIMUM_STEPPER_PULSE 1
 #endif
 /**
  * Maximum stepping rate (in Hz) the stepper driver allows
@@ -1654,9 +1664,11 @@
 
 #define MAX_CMD_SIZE 96
 #if(ENABLED(MachineCR10Orig) || ENABLED(LowMemoryBoard))
-#define BUFSIZE 2
+  #define BUFSIZE 2
+#elif ANY(SKR13, SKRPRO11)
+  #define BUFSIZE 8
 #else
-#define BUFSIZE 4
+  #define BUFSIZE 4
 #endif
 // Transmission to Host Buffer Size
 // To save 386 bytes of PROGMEM (and TX_BUFFER_SIZE+3 bytes of RAM) set to 0.
@@ -1665,7 +1677,11 @@
 // For debug-echo: 128 bytes for the optimal speed.
 // Other output doesn't need to be that speedy.
 // :[0, 2, 4, 8, 16, 32, 64, 128, 256]
-#define TX_BUFFER_SIZE 0
+#if ANY(SKR13, SKRPRO11)
+  #define TX_BUFFER_SIZE 32
+#else
+  #define TX_BUFFER_SIZE 0
+#endif
 
 // Host Receive Buffer Size
 // Without XON/XOFF flow control (see SERIAL_XON_XOFF below) 32 bytes should be enough.
@@ -1743,7 +1759,7 @@
  * Note that M207 / M208 / M209 settings are saved to EEPROM.
  *
  */
- #if ENABLED(SKR13, SKRPRO11)
+ #if ANY(SKR13, SKRPRO11)
   #define FWRETRACT
 #endif
 #if ENABLED(FWRETRACT)
@@ -2687,7 +2703,9 @@
  * Add G-codes M810-M819 to define and run G-code macros.
  * Macros are not saved to EEPROM.
  */
-//#define GCODE_MACROS
+#if ANY(SKR13, SKRPRO11)
+  #define GCODE_MACROS
+#endif
 #if ENABLED(GCODE_MACROS)
   #define GCODE_MACROS_SLOTS       5  // Up to 10 may be used
   #define GCODE_MACROS_SLOT_SIZE  50  // Maximum length of a single macro
@@ -2706,16 +2724,23 @@
   #define USER_SCRIPT_RETURN  // Return to status screen after a script
   #define CUSTOM_USER_MENU_TITLE "Leveling Tools"
 
-#if ENABLED(BedDC)
-  #define CommBedTmp "55"
-#else
-  #define CommBedTmp "75"
-#endif
+  #if ENABLED(BedDC)
+    #define CommBedTmp "55"
+  #else
+    #define CommBedTmp "75"
+  #endif
+
+  #if ENABLED(DualZ)
+    #define DualZComm "\nG34I8"
+  #else
+    #define DualZComm ""
+  #endif
+
   #define USER_DESC_1 "Setup"
   #if (ENABLED(ABL_UBL))
-    #define USER_GCODE_1 "M190S" CommBedTmp "\nG28\nG29P1\nG29P3\nG29S1\nG29S0\nG29F0.0\nG29A\nM104S215\nG28\nM109S215\nG1X150Y150F5000\nG1Z0\nM500\nM400\nM117 Set Z Offset"
+    #define USER_GCODE_1 "M190S" CommBedTmp "\nG28" DualZComm "\nG29P1\nG29P3\nG29S1\nG29S0\nG29F0.0\nG29A\nM104S215\nG28\nM109S215\nG1X150Y150F5000\nG1Z0\nM500\nM400\nM117 Set Z Offset"
   #elif ENABLED(ABL_BI)
-    #define USER_GCODE_1 "M190S" CommBedTmp "\nG28\nG29\nM400\nM104S215\nG28\nM109S215\nM420S1\nG1X100Y100F5000\nG1Z0\nM500\nM117 Set Z Offset"
+    #define USER_GCODE_1 "M190S" CommBedTmp "\nG28" DualZComm "\nG29\nM400\nM104S215\nG28\nM109S215\nM420S1\nG1X100Y100F5000\nG1Z0\nM500\nM117 Set Z Offset"
   #endif
 
     #define USER_DESC_2 "PID Tune"
