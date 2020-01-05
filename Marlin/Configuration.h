@@ -56,7 +56,7 @@
  */
 
  //#define EZRstruder
- //#define Bondtech
+ #define Bondtech
  //#define E3DTitan
  //#define E3DHemera
 
@@ -99,7 +99,7 @@
 //#define AddonFilSensor //Adds a filamnt runout sensor to the CR20 or Ender 4
 //#define lerdgeFilSensor //Using lerdge filament sensor, which is opposite polarity to stock
 //#define DualFilSensors //Using dual filament sensors on XMax and YMAX
-//#define FilamentEncoder //Using filamet jam sensor such as the Bigtreetech Encoder wheel
+#define FilamentEncoder //Using filamet jam sensor such as the Bigtreetech Encoder wheel
 
 
 // Advanced options - Not for most users
@@ -151,7 +151,7 @@
   //#define Dual_CyclopsSingleNozzle
   //#define Dual_ChimeraDualNozzle
 
-//#define POWER_LOSS_RECOVERY //Large and does not fit with any other features on Melzi, or UBL on Atmega
+#define POWER_LOSS_RECOVERY //Large and does not fit with any other features on Melzi, or UBL on Atmega
 /*
    Choose a probe grid density below. Faster probes less points, but is less accurate.
    Extreme is for extremely uneven or tilted bed surfaces.
