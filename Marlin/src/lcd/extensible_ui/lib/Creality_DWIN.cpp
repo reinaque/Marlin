@@ -11,10 +11,6 @@ namespace ExtUI
   const float manual_feedrate_mm_m[] = MANUAL_FEEDRATE;
   int startprogress = 0;
   CRec CardRecbuf;
-  #if DISABLED(POWER_LOSS_RECOVERY)
-    int power_off_type_yes = 0;
-    int power_off_commands_count = 0;
-  #endif
 
   char waitway = 0;
   int recnum = 0;
@@ -192,23 +188,10 @@ void onIdle()
       break;
 		}
 
-
-    #if ENABLED(POWER_LOSS_RECOVERY)
-      if (PoweroffContinue)
-      {
-        PoweroffContinue = false;
-        injectCommands_P(power_off_commands[3]);
-        card.startFileprint();
-        print_job_timer.power_off_start();
-      }
-    #endif
-
   void yield();
 
 	if (InforShowStatus)
 	{
-    if(power_off_type_yes ==0)
-    {
       if (startprogress == 0)
 			{
 				rtscheck.RTS_SndData(StartSoundSet, SoundAddr);
@@ -238,42 +221,13 @@ void onIdle()
 				rtscheck.RTS_SndData((startprogress - 100), StartIcon + 1);
       if ((startprogress += 1) > 200)
 			{
-        #if ENABLED(POWER_LOSS_RECOVERY)
-          if(isMediaInserted() && (power_off_commands_count > 0)) {
-            for (uint16_t i = 0; i < CardRecbuf.Filesum; i++)
-            {
-              if (!strcmp(CardRecbuf.Cardfilename[i], &power_off_info.sd_filename[1]))
-              {
-                InforShowStatus = true;
-                int filelen = strlen(CardRecbuf.Cardshowfilename[i]);
-                filelen = (TEXTBYTELEN - filelen) / 2;
-                if (filelen > 0)
-                {
-                  char buf[20];
-                  memset(buf, 0, sizeof(buf));
-                  strncpy(buf, "         ", filelen);
-                  strcpy(&buf[filelen], CardRecbuf.Cardshowfilename[i]);
-                  RTS_SndData(buf, Printfilename);
-                }
-                else
-                  RTS_SndData(CardRecbuf.Cardshowfilename[i], Printfilename); //filenames
-                RTS_SndData(ExchangePageBase + 76, ExchangepageAddr);
-                break;
-              }
-            }
-          }
-          reEntryPrevent = false;
-          return;
-        #endif
           SERIAL_ECHOLN("  startprogress ");
-          power_off_type_yes = 1;
           InforShowStatus = true;
           TPShowStatus = false;
           rtscheck.RTS_SndData(ExchangePageBase + 45, ExchangepageAddr);
 			}
       reEntryPrevent = false;
 			return;
-    }
 
 			if (isPrinting())
 			{
@@ -1478,62 +1432,13 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
 
   #if ENABLED(POWER_LOSS_RECOVERY)
     case PwrOffNoF:
-      char cmd1[30];
       if (recdat.data[0] == 1) // Yes:continue to print the 3Dmode during power-off.
       {
-        if (power_off_commands_count > 0)
-        {
-          sprintf_P(cmd1, PSTR("M190 S%i"), power_off_info.target_temperature_bed);
-          injectCommands_P(cmd1);
-          sprintf_P(cmd1, PSTR("M109 S%i"), power_off_info.target_temperature[0]);
-          injectCommands_P(cmd1);
-          injectCommands_P(PSTR("M106 S255"));
-          sprintf_P(cmd1, PSTR("T%i"), power_off_info.saved_extruder);
-          injectCommands_P(cmd1);
-          power_off_type_yes = 1;
-
-  #if FAN_COUNT > 0
-          for (uint8_t i = 0; i < FAN_COUNT; i++)
-            fanSpeeds[i] = FanOn;
-  #endif
-          FanStatus = false;
-
-          PrintStatue[1] = 0;
-          PrinterStatusKey[0] = 1;
-          PrinterStatusKey[1] = 3;
-          PoweroffContinue = true;
-          TPShowStatus = InforShowStatus = true;
-
-          RTS_SndData(1 + CEIconGrap, IconPrintstatus);
-          RTS_SndData(ExchangePageBase + 53, ExchangepageAddr);
-
-          //card.startFileprint();
-          //print_job_timer.power_off_start();
-        }
+        injectCommands_P(PSTR("M1000"));
       }
       else if (recdat.data[0] == 2) // No
       {
-        InforShowStatus = true;
-        TPShowStatus = false;
-        RTS_SndData(ExchangePageBase + 45, ExchangepageAddr); //exchange to 45 page
-
-        stopPrint();
-
-  #if ENABLED(SDSUPPORT) && ENABLED(POWEROFF_SAVE_SD_FILE)
-        card.openPowerOffFile(power_off_info.power_off_filename, O_CREAT | O_WRITE | O_TRUNC | O_SYNC);
-        power_off_info.valid_head = 0;
-        power_off_info.valid_foot = 0;
-        if (card.savePowerOffInfo(&power_off_info, sizeof(power_off_info)) == -1)
-        {
-          SERIAL_ECHOLN("Stop to Write power off file failed.");
-        }
-        card.closePowerOffFile();
-        power_off_commands_count = 0;
-  #endif
-
-        wait_for_heatup = false;
-        PrinterStatusKey[0] = 0;
-        delay_ms(500); //for system
+        injectCommands_P(PSTR("M1000C"));
       }
       break;
   #endif
@@ -1714,14 +1619,6 @@ void onPrintTimerStarted()
 	SERIAL_ECHOLN("==onPrintTimerStarted==");
   if ( waitway == 7 )
     return;
-  #if ENABLED(POWER_LOSS_RECOVERY)
-    if (PoweroffContinue)
-    {
-      injectCommands_P(power_off_commands[0]);
-      injectCommands_P(power_off_commands[1]);
-      injectCommands_P((PSTR("G28 X0 Y0")));
-    }
-  #endif
 	PrinterStatusKey[1] = 3;
 	InforShowStatus = true;
 	rtscheck.RTS_SndData(4 + CEIconGrap, IconPrintstatus);
@@ -1759,7 +1656,6 @@ void onPrintTimerStopped()
 	FanStatus = true;
 
 	PrinterStatusKey[0] = 0;
-	power_off_type_yes = 1;
 	InforShowStatus = true;
 	TPShowStatus = false;
 	rtscheck.RTS_SndData(ExchangePageBase + 45, ExchangepageAddr);
@@ -1889,6 +1785,18 @@ void onConfigurationStoreRead(bool success)
 	SERIAL_ECHOLNPAIR("\n init zprobe_zoffset = ", getZOffset_mm());
 	rtscheck.RTS_SndData(getZOffset_mm() * 100, 0x1026);
 }
+
+#if ENABLED(POWER_LOSS_RECOVERY)
+  void OnPowerLossResume() {
+        rtscheck.RTS_SndData(ExchangePageBase + 76, ExchangepageAddr);
+      }
+#endif
+
+#if HAS_PID_HEATING
+    void OnPidTuning(const result_t rst) {
+      // Called for temperature PID tuning result
+    }
+  #endif
 
 } // namespace ExtUI
 

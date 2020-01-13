@@ -1519,10 +1519,6 @@ void MarlinUI::update() {
       synchronize(GET_TEXT(MSG_PAUSE_PRINT));
     #endif
 
-    #if ENABLED(POWER_LOSS_RECOVERY)
-      if (recovery.enabled) recovery.save(true, false);
-    #endif
-
     #if ENABLED(HOST_PROMPT_SUPPORT)
       host_prompt_open(PROMPT_PAUSE_RESUME, PSTR("UI Pause"), PSTR("Resume"));
     #endif
