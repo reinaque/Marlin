@@ -9,7 +9,7 @@ namespace ExtUI
 {
   uint8_t waitway_lock = 0;
   const float manual_feedrate_mm_m[] = MANUAL_FEEDRATE;
-  int startprogress = 0;
+  uint8_t startprogress = 0;
   CRec CardRecbuf;
 
   char waitway = 0;
@@ -33,9 +33,7 @@ namespace ExtUI
   bool FanStatus = true;
   bool AutohomeKey = false;
   unsigned char AutoHomeIconNum;
-  unsigned long VolumeSet = 0x80;
-  extern char power_off_commands[9][96];
-  bool PoweroffContinue = false;
+  unsigned long VolumeSet = 0x20;
 
   bool reEntryPrevent = false;
   uint16_t idleThrottling = 0;
@@ -50,7 +48,6 @@ void onStartup()
 
 	//VolumeSet = eeprom_read_byte((unsigned char*)FONT_EEPROM+4);
 	//if(VolumeSet < 0 || VolumeSet > 0xFF)
-	VolumeSet = 0x20;
 
   //Set Eco Mode
 	if (PrintMode)
@@ -117,7 +114,7 @@ void onIdle()
 {
   if (reEntryPrevent)
     return;
-  if(idleThrottling++ < 1000){
+  if(idleThrottling++ < 750){
     return;
   }
 
@@ -192,42 +189,45 @@ void onIdle()
 
 	if (InforShowStatus)
 	{
-      if (startprogress == 0)
-			{
-				rtscheck.RTS_SndData(StartSoundSet, SoundAddr);
-
-				if (VolumeSet == 0)
-				{
-					rtscheck.RTS_SndData(0, VolumeIcon);
-					rtscheck.RTS_SndData(9, SoundIcon);
-				}
-				else
-				{
-					rtscheck.RTS_SndData((VolumeSet + 1) / 32 - 1, VolumeIcon);
-					rtscheck.RTS_SndData(8, SoundIcon);
-				}
-				rtscheck.RTS_SndData(VolumeSet, VolumeIcon - 2);
-				rtscheck.RTS_SndData(VolumeSet << 8, SoundAddr + 1);
-        #if HAS_MESH
-          if (getLevelingActive())
-            rtscheck.RTS_SndData(3, AutoLevelIcon); /*On*/
+        if (startprogress == 0)
+        {
+          rtscheck.RTS_SndData(StartSoundSet, SoundAddr);
+          if (VolumeSet == 0)
+          {
+            rtscheck.RTS_SndData(0, VolumeIcon);
+            rtscheck.RTS_SndData(9, SoundIcon);
+          }
           else
-            rtscheck.RTS_SndData(2, AutoLevelIcon); /*Off*/
-        #endif
-			}
-			if (startprogress <= 100)
-				rtscheck.RTS_SndData(startprogress, StartIcon);
-			else
-				rtscheck.RTS_SndData((startprogress - 100), StartIcon + 1);
-      if ((startprogress += 1) > 200)
-			{
-          SERIAL_ECHOLN("  startprogress ");
-          InforShowStatus = true;
-          TPShowStatus = false;
-          rtscheck.RTS_SndData(ExchangePageBase + 45, ExchangepageAddr);
-			}
-      reEntryPrevent = false;
-			return;
+          {
+            rtscheck.RTS_SndData((VolumeSet + 1) / 32 - 1, VolumeIcon);
+            rtscheck.RTS_SndData(8, SoundIcon);
+          }
+          rtscheck.RTS_SndData(VolumeSet, VolumeIcon - 2);
+          rtscheck.RTS_SndData(VolumeSet << 8, SoundAddr + 1);
+          #if HAS_MESH
+            if (getLevelingActive())
+              rtscheck.RTS_SndData(3, AutoLevelIcon); /*On*/
+            else
+              rtscheck.RTS_SndData(2, AutoLevelIcon); /*Off*/
+          #endif
+          startprogress += 25;
+        }
+        else if ((startprogress += 25) > 200 && startprogress < 250)
+        {
+            startprogress = 254;
+            SERIAL_ECHOLN("  startprogress ");
+            InforShowStatus = true;
+            TPShowStatus = false;
+            rtscheck.RTS_SndData(ExchangePageBase + 45, ExchangepageAddr);
+            reEntryPrevent = false;
+			      return;
+        }
+        if (startprogress <= 100)
+          rtscheck.RTS_SndData(startprogress, StartIcon);
+        else
+          rtscheck.RTS_SndData((startprogress - 100), StartIcon + 1);
+
+        //rtscheck.RTS_SndData((startprogress++) % 5, ExchFlmntIcon);
 
 			if (isPrinting())
 			{
@@ -294,14 +294,14 @@ void onIdle()
 				else if (getActualTemp_celsius(H0) >= getTargetTemp_celsius(H0) && NozzleTempStatus[2])
 				{
 					SERIAL_ECHOPAIR("\n ***NozzleTempStatus[2] =", (int)NozzleTempStatus[2]);
-					startprogress = NozzleTempStatus[2] = 0;
+					NozzleTempStatus[2] = 0;
 					TPShowStatus = true;
 					rtscheck.RTS_SndData(4, ExchFlmntIcon);
 					rtscheck.RTS_SndData(ExchangePageBase + 83, ExchangepageAddr);
 				}
 				else if (NozzleTempStatus[2])
 				{
-					rtscheck.RTS_SndData((startprogress++) % 5, ExchFlmntIcon);
+					//rtscheck.RTS_SndData((startprogress++) % 5, ExchFlmntIcon);
 				}
 			}
 
@@ -852,7 +852,6 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
         NozzleTempStatus[2] = 1;
         PrinterStatusKey[1] = 0;
         InforShowStatus = true;
-        startprogress = 0;
         RTS_SndData(ExchangePageBase + 82, ExchangepageAddr);
       }
       break;
@@ -1243,7 +1242,7 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
         break;
       }
 
-      targetPos = ((float)recdat.data[0]) / 10;
+      static float targetPos = ((float)recdat.data[0]) / 10;
 
       if (targetPos < min)
         targetPos = min;

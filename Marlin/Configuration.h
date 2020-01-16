@@ -160,8 +160,8 @@
    Standard is recommended in most other scenarios.
 */
 //#define MeshFast
-//#define MeshStd
-#define MeshFine
+#define MeshStd
+//#define MeshFine
 //#define MeshExtreme
 
 /*
@@ -423,11 +423,16 @@
  * :[-1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
 
-#if ENABLED(SKR13)
-  #define SERIAL_PORT_2 0
-#elif ENABLED(SKRPRO11) && NONE(MachineCR10SPro, MachineCRX, MachineEnder5Plus, MachineCR10Max) || (ENABLED(GraphicLCD) && NONE(Force10SProDisplay, ForceCRXDisplay))
+#if ANY(SKR13, SKRPRO11) && NONE(MachineCR10SPro, MachineCRX, MachineEnder5Plus, MachineCR10Max) || (ENABLED(GraphicLCD) && NONE(Force10SProDisplay, ForceCRXDisplay))
   #define SERIAL_PORT_2 1
+#elif ENABLED(SKR13)
+  #define DGUS_SERIAL_PORT 0
+#elif ENABLED(SKR11PRO)
+  #define DGUS_SERIAL_PORT 1
+#elif ANY(MachineCR10SPro, MachineCRX, MachineEnder5Plus, MachineCR10Max) && DISABLED(GraphicLCD)
+  //#define DGUS_SERIAL_PORT 2
 #endif
+#define bDGUS_SERIAL_STATS_RX_BUFFER_OVERRUNS false
 
 /**
  * This setting determines the communication speed of the printer.
@@ -1759,7 +1764,7 @@
     #define Y_BED_SIZE 400
     #define Z_MAX_POS 400
   #elif ENABLED(MachineCR10Max)
-    #define X_BED_SIZE 475
+    #define X_BED_SIZE 450
     #define Y_BED_SIZE 450
     #define Z_MAX_POS 470
   #elif ENABLED(MachineS5)
@@ -1831,7 +1836,7 @@
     #define Z_MAX_POS 400
     #define ClipClearance 15
   #elif ENABLED(MachineCR10Max)
-    #define X_BED_SIZE 475
+    #define X_BED_SIZE 450
     #define Y_BED_SIZE 450
     #define Z_MAX_POS 470
     #define ClipClearance 15

@@ -90,10 +90,8 @@ namespace ExtUI {
   #define StatusMessageString 0x20E8
 #endif
 
-#if ENABLED(SKR13)
-  #define DWIN_SERIAL MSerial
-#elif ENABLED(SKRPRO11)
-  #define DWIN_SERIAL Serial1
+#if ANY(SKR13, SKRPRO11)
+  #define DWIN_SERIAL DGUS_SERIAL
 #else
   #define DWIN_SERIAL Serial2
 #endif
@@ -163,28 +161,9 @@ static RTSSHOW rtscheck;
                 0x103E, 0x1040, 0x1044, 0x1046, 0x1048, 0x104A, 0x104C, 0x1054, 0x1056, 0x1058,
                 0x105C, 0x105E, 0x105F, 0x1088, 0};
 
-extern void RTSUpdate();
-extern void RTSInit();
+void RTSUpdate();
+void RTSInit();
 
-extern char waitway;
-extern char CardCheckStatus[2];
-extern bool InforShowStatus;
-extern unsigned char AxisPagenum;
-extern bool AutohomeKey;
-extern bool TPShowStatus;
-extern int Update_Time_Value;
-extern bool PoweroffContinue;
-extern char FilementStatus[2];
-extern char commandbuf[30];
-
-extern int temphot;
-extern int tempbed;
-extern float pause_z;
-extern char PrintStatue[2];
-extern char PrinterStatusKey[2];
-extern uint8_t progress_bar_percent;
-extruder_t original_extruder;
-float targetPos;
 }
 #ifndef USER_GCODE_1
   #define USER_GCODE_1 "G28"
