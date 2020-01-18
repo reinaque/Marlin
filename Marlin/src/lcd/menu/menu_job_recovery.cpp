@@ -38,9 +38,8 @@ static void lcd_power_loss_recovery_resume() {
   queue.inject_P(PSTR("M1000"));
 }
 
-static void lcd_power_loss_recovery_cancel() {
-  card.removeJobRecoveryFile();
-  card.autostart_index = 0;
+void lcd_power_loss_recovery_cancel() {
+  recovery.cancel();
   ui.return_to_status();
 }
 
@@ -50,8 +49,8 @@ void menu_job_recovery() {
   ui.defer_status_screen();
   START_MENU();
   STATIC_ITEM(MSG_OUTAGE_RECOVERY);
-  MENU_ITEM(function, MSG_RESUME_PRINT, lcd_power_loss_recovery_resume);
-  MENU_ITEM(function, MSG_STOP_PRINT, lcd_power_loss_recovery_cancel);
+  ACTION_ITEM(MSG_RESUME_PRINT, lcd_power_loss_recovery_resume);
+  ACTION_ITEM(MSG_STOP_PRINT, lcd_power_loss_recovery_cancel);
   END_MENU();
 }
 

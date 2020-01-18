@@ -70,7 +70,7 @@ void GcodeSuite::M575() {
 
       if (parser.seen('U')) settings.save();
     } break;
-    default: SERIAL_ECHO_MSG("?(B)aud rate is implausible.");
+    default: SERIAL_ECHO_MSG("?(B)aud rate implausible.");
   }
 }
 
