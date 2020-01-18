@@ -2835,7 +2835,7 @@
  *
  * Implement M486 to allow Marlin to skip objects
  */
-#if NONE(MachineCR10Orig, LowMemoryBoard)
+#if NONE(MachineCR10Orig, LowMemoryBoard, EXTENSIBLE_UI)
   #define CANCEL_OBJECTS
 #endif
 
@@ -3068,7 +3068,7 @@
  * M43 - display pin status, watch pins for changes, watch endstops & toggle LED, Z servo probe test, toggle pins
  */
 #if NONE(MachineCR10Orig, LowMemoryBoard)
-  #define PINS_DEBUGGING
+  //#define PINS_DEBUGGING
 #endif
 // Enable Marlin dev mode which adds some special commands
 //#define MARLIN_DEV_MODE

@@ -212,7 +212,7 @@ void onIdle()
           #endif
           startprogress += 25;
         }
-        else if ((startprogress += 25) > 200 && startprogress < 250)
+        else if( startprogress < 250)
         {
             startprogress = 254;
             SERIAL_ECHOLN("  startprogress ");
@@ -1787,15 +1787,20 @@ void onConfigurationStoreRead(bool success)
 
 #if ENABLED(POWER_LOSS_RECOVERY)
   void OnPowerLossResume() {
-        rtscheck.RTS_SndData(ExchangePageBase + 76, ExchangepageAddr);
-      }
+    SERIAL_ECHOLN("==OnPowerLossResume==");
+    startprogress = 254;
+    InforShowStatus = true;
+    TPShowStatus = false;
+    reEntryPrevent = false;
+    rtscheck.RTS_SndData(ExchangePageBase + 76, ExchangepageAddr);
+  }
 #endif
 
 #if HAS_PID_HEATING
-    void OnPidTuning(const result_t rst) {
-      // Called for temperature PID tuning result
-    }
-  #endif
+  void OnPidTuning(const result_t rst) {
+    // Called for temperature PID tuning result
+  }
+#endif
 
 } // namespace ExtUI
 
