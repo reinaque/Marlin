@@ -251,7 +251,7 @@ xyz_pos_t probe_offset; // Initialized by settings.load()
     #if ENABLED(PROBING_STEPPERS_OFF)
       disable_e_steppers();
       #if NONE(DELTA, HOME_AFTER_DEACTIVATE)
-        disable_X(); disable_Y();
+        DISABLE_AXIS_X(); DISABLE_AXIS_Y();
       #endif
     #endif
     if (p) safe_delay(
@@ -703,11 +703,8 @@ float probe_at_point(const float &rx, const float &ry, const ProbePtRaise raise_
   // TODO: Adapt for SCARA, where the offset rotates
   xyz_pos_t npos = { rx, ry };
   if (probe_relative) {
-    if (!position_is_reachable_by_probe(npos)) {
-      if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("Position Not Reachable");
-      return NAN;  // The given position is in terms of the probe
-    }
-    npos -= probe_offset_xy;                                   // Get the nozzle position
+    if (!position_is_reachable_by_probe(npos)) return NAN;  // The given position is in terms of the probe
+    npos -= probe_offset_xy;                                // Get the nozzle position
   }
   else if (!position_is_reachable(npos)) return NAN;        // The given position is in terms of the nozzle
 

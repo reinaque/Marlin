@@ -1791,8 +1791,8 @@
     #define Z_MAX_POS 200
     #define ClipClearance 15
   #elif ENABLED(MachineEnder3)
-    #define X_BED_SIZE 260
-    #define Y_BED_SIZE 260
+    #define X_BED_SIZE 250
+    #define Y_BED_SIZE 250
     #define Z_MAX_POS 250
     #define ClipClearance 15
   #elif(ANY(MachineEnder4, MachineEnder5))
@@ -2529,7 +2529,7 @@
  * Disable all menus and only display the Status Screen, or
  * just remove some extraneous menu items to recover space.
  */
-#if ENABLED(MachineCR10Orig)
+#if ENABLED(MachineCR10Orig) && DISABLED(MelziHostOnly) && ENABLED(ABL_BI)
   //#define NO_LCD_MENUS
   #define SLIM_LCD_MENUS
 #endif
