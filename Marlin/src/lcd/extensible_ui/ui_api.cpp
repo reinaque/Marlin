@@ -733,7 +733,7 @@ namespace ExtUI {
           #if EXTRUDERS > 1
             && (linked_nozzles || active_extruder == 0)
           #endif
-        ) probe_offset.z += mm;
+        ) probe.offset.z += mm;
       #else
         UNUSED(mm);
       #endif
@@ -771,7 +771,7 @@ namespace ExtUI {
 
   float getZOffset_mm() {
     #if HAS_BED_PROBE
-      return probe_offset.z;
+      return probe.offset.z;
     #elif ENABLED(BABYSTEP_DISPLAY_TOTAL)
       return (planner.steps_to_mm[Z_AXIS] * babystep.axis_total[BS_TODO_AXIS(Z_AXIS)]);
     #else
@@ -782,7 +782,7 @@ namespace ExtUI {
   void setZOffset_mm(const float value) {
     #if HAS_BED_PROBE
       if (WITHIN(value, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX))
-        probe_offset.z = value;
+        probe.offset.z = value;
     #elif ENABLED(BABYSTEP_DISPLAY_TOTAL)
       babystep.add_mm(Z_AXIS, (value - getZOffset_mm()));
     #else
@@ -816,10 +816,10 @@ namespace ExtUI {
 
   #if HAS_BED_PROBE
     float getProbeOffset_mm(const axis_t axis) {
-      return probe_offset.pos[axis];
+      return probe.offset.pos[axis];
     }
     void setProbeOffset_mm(const float val, const axis_t axis) {
-      probe_offset.pos[axis] = val;
+      probe.offset.pos[axis] = val;
     }
   #endif
 
@@ -896,10 +896,10 @@ namespace ExtUI {
       return thermalManager.temp_bed.pid.Kp;
     }
     float getBedPIDValues_Ki() {
-      return thermalManager.temp_bed.pid.Kp;
+      return thermalManager.temp_bed.pid.Ki;
     }
     float getBedPIDValues_Kd() {
-      return thermalManager.temp_bed.pid.Kp;
+      return thermalManager.temp_bed.pid.Kd;
     }
 
     void setPIDValues(const float p, const float i, const float d, extruder_t tool) {

@@ -41,6 +41,32 @@ namespace ExtUI
   uint16_t pid_hotendAutoTemp = 150;
   uint16_t pid_bedAutoTemp = 70;
 
+short swapByteOrder(unsigned short us)
+{
+    us = (us >> 8) |
+         (us << 8);
+}
+
+int swapByteOrder(unsigned int ui)
+{
+    ui = (ui >> 24) |
+         ((ui<<8) & 0x00FF0000) |
+         ((ui>>8) & 0x0000FF00) |
+         (ui << 24);
+}
+
+long swapByteOrder(unsigned long ull)
+{
+    ull = (ull >> 56) |
+          ((ull<<40) & 0x00FF000000000000) |
+          ((ull<<24) & 0x0000FF0000000000) |
+          ((ull<<8) & 0x000000FF00000000) |
+          ((ull>>8) & 0x00000000FF000000) |
+          ((ull>>24) & 0x0000000000FF0000) |
+          ((ull>>40) & 0x000000000000FF00) |
+          (ull << 56);
+}
+
 void onStartup()
 {
 	DWIN_SERIAL.begin(115200);
@@ -276,27 +302,27 @@ void onIdle()
 			rtscheck.RTS_SndData(getActualTemp_celsius(BED), Bedtemp);
       rtscheck.RTS_SndData(getTargetTemp_celsius(H0), NozzlePreheat);
 			rtscheck.RTS_SndData(getTargetTemp_celsius(BED), BedPreheat);
-			rtscheck.RTS_SndData(getFlowPercentage(E0), Flowrate);
-      rtscheck.RTS_SndData(getAxisSteps_per_mm(X), StepMM_X);
-      rtscheck.RTS_SndData(getAxisSteps_per_mm(Y), StepMM_Y);
-      rtscheck.RTS_SndData(getAxisSteps_per_mm(Z), StepMM_Z);
-      rtscheck.RTS_SndData(getAxisSteps_per_mm(E0), StepMM_E);
+			rtscheck.RTS_SndData(getFlowPercentage(E0) * 100, Flowrate);
+      rtscheck.RTS_SndData(getAxisSteps_per_mm(X) * 100, StepMM_X);
+      rtscheck.RTS_SndData(getAxisSteps_per_mm(Y) * 100, StepMM_Y);
+      rtscheck.RTS_SndData(getAxisSteps_per_mm(Z) * 100, StepMM_Z);
+      rtscheck.RTS_SndData(getAxisSteps_per_mm(E0) * 100, StepMM_E);
 
       #if HAS_BED_PROBE
-        rtscheck.RTS_SndData(getProbeOffset_mm(X), ProbeOffset_X);
-        rtscheck.RTS_SndData(getProbeOffset_mm(Y), ProbeOffset_Y);
-        rtscheck.RTS_SndData(getProbeOffset_mm(Z), ProbeOffset_Z);
+        rtscheck.RTS_SndData(getProbeOffset_mm(X) * 100, ProbeOffset_X);
+        rtscheck.RTS_SndData(getProbeOffset_mm(Y) * 100, ProbeOffset_Y);
+        rtscheck.RTS_SndData(getZOffset_mm() * 100, ProbeOffset_Z);
       #endif
 
       #if HAS_PID_HEATING
         rtscheck.RTS_SndData(pid_hotendAutoTemp, HotendPID_AutoTmp);
         rtscheck.RTS_SndData(pid_bedAutoTemp, BedPID_AutoTmp);
-        rtscheck.RTS_SndData(getPIDValues_Kp(E0), HotendPID_P);
-        rtscheck.RTS_SndData(getPIDValues_Ki(E0), HotendPID_I);
-        rtscheck.RTS_SndData(getPIDValues_Kd(E0), HotendPID_D);
-        rtscheck.RTS_SndData(getBedPIDValues_Kp(), BedPID_P);
-        rtscheck.RTS_SndData(getBedPIDValues_Ki(), BedPID_I);
-        rtscheck.RTS_SndData(getBedPIDValues_Kd(), BedPID_D);
+        rtscheck.RTS_SndData((getPIDValues_Kp(E0) * 10), HotendPID_P, VarAddr_W);
+        rtscheck.RTS_SndData((getPIDValues_Ki(E0) * 10), HotendPID_I, VarAddr_W);
+        rtscheck.RTS_SndData((getPIDValues_Kd(E0) * 10), HotendPID_D, VarAddr_W);
+        rtscheck.RTS_SndData((getBedPIDValues_Kp() * 10), BedPID_P, VarAddr_W);
+        rtscheck.RTS_SndData((getBedPIDValues_Ki() * 10), BedPID_I, VarAddr_W);
+        rtscheck.RTS_SndData((getBedPIDValues_Kd() * 10), BedPID_D, VarAddr_W);
       #endif
 
 			if (NozzleTempStatus[0] || NozzleTempStatus[2]) //statuse of loadfilement and unloadfinement when temperature is less than
@@ -518,7 +544,7 @@ void RTSSHOW::RTS_SndData(int n, unsigned long addr, unsigned char cmd /*= VarAd
 {
 	if (cmd == VarAddr_W)
 	{
-		if ((uint8_t)n > 0xFFFF)
+    if ((uint8_t)n > 0xFFFF)
 		{
 			snddat.data[0] = n >> 16;
 			snddat.data[1] = n & 0xFFFF;
@@ -555,13 +581,18 @@ void RTSSHOW::RTS_SndData(unsigned long n, unsigned long addr, unsigned char cmd
 {
 	if (cmd == VarAddr_W)
 	{
-		if (n > 0xFFFF)
+    if (n > 0xFFFF)
 		{
-			snddat.data[0] = n >> 16;
-			snddat.data[1] = n & 0xFFFF;
+      snddat.data[0] = n >> 16;
+      snddat.data[1] = n & 0xFFFF;
+
+		  //snddat.data[0] = n >> 24;
+			//snddat.data[1] = n >> 16;
+			//snddat.data[2] = n >> 8;
+			//snddat.data[3] = n;
 			snddat.len = 7;
-		}
-		else
+    }
+    else
 		{
 			snddat.data[0] = n;
 			snddat.len = 5;
@@ -688,8 +719,27 @@ void RTSSHOW::RTS_HandleData()
 		}
 	}
 
-  if (recdat.addr == Flowrate)
+  switch(recdat.addr) {
+    case Flowrate :
+    case StepMM_X :
+    case StepMM_Y :
+    case StepMM_Z :
+    case StepMM_E :
+    case ProbeOffset_X :
+    case ProbeOffset_Y :
+    case ProbeOffset_Z :
+    case HotendPID_AutoTmp :
+    case BedPID_AutoTmp :
+    case HotendPID_P :
+    case HotendPID_I :
+    case HotendPID_D :
+    case BedPID_P :
+    case BedPID_I :
+    case BedPID_D :
     Checkkey = ManualSetTemp;
+    break;
+  }
+
 	if (recdat.addr >= SDFILE_ADDR && recdat.addr <= (SDFILE_ADDR + 10 * (FileNum + 1)))
 		Checkkey = Filename;
 
@@ -1410,7 +1460,7 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
           break;
         case 2:
           //PID Hotend
-          injectCommands_P(PSTR("M303E0S215C8U"));
+          startPIDTune(pid_hotendAutoTemp, getActiveTool());
           break;
         case 3:
           //Init EEPROM
@@ -1422,7 +1472,7 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
           break;
         case 5:
           //PID Bed
-          injectCommands_P(PSTR("M303E-1S65C4U"));
+          startBedPIDTune(pid_bedAutoTemp);
           break;
         default:
           SERIAL_ECHOLN("Invalid Option");

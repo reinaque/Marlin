@@ -45,25 +45,25 @@ namespace ExtUI {
 #define	FanKeyIcon			0x101E
 #define Flowrate        0x1300
 
-#define StepMM_X      0x123C
-#define StepMM_Y      0x123E
-#define StepMM_Z      0x1240
-#define StepMM_E      0x1242
+#define StepMM_X      0x1242
+#define StepMM_Y      0x1246
+#define StepMM_Z      0x124A
+#define StepMM_E      0x124E
 
 #define ProbeOffset_X  0x1236
-#define ProbeOffset_Y  0x1238
-#define ProbeOffset_Z  0x123A
+#define ProbeOffset_Y  0x123A
+#define ProbeOffset_Z  0x123E
 
-#define HotendPID_AutoTmp 0x1244
-#define BedPID_AutoTmp    0x1246
+#define HotendPID_AutoTmp 0x1252
+#define BedPID_AutoTmp    0x1254
 
-#define HotendPID_P 0x1248
-#define HotendPID_I 0x124A
-#define HotendPID_D 0x124E
+#define HotendPID_P 0x1256
+#define HotendPID_I 0x125A
+#define HotendPID_D 0x125E
 
-#define BedPID_P 0x1250
-#define BedPID_I 0x1252
-#define BedPID_D 0x1254
+#define BedPID_P 0x1262
+#define BedPID_I 0x1264
+#define BedPID_D 0x126A
 
 #define	HeatPercentIcon		0x1024
 

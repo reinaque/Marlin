@@ -10,9 +10,9 @@
 //#define MachineEnder4
 //#define MachineCR20 //Buzzer doesnt work
 //#define MachineCR20Pro
-#define MachineCR10S
+//#define MachineCR10S
 //#define MachineCR10SV2
-//#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
+#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
 //#define MachineCR10SProV2 // Second Gen 10S Pro with BLTouch wired to Z Max
 //#define MachineCRX
 //#define MachineCR10Max
@@ -99,7 +99,7 @@
 //#define AddonFilSensor //Adds a filamnt runout sensor to the CR20 or Ender 4
 //#define lerdgeFilSensor //Using lerdge filament sensor, which is opposite polarity to stock
 //#define DualFilSensors //Using dual filament sensors on XMax and YMAX
-//#define FilamentEncoder //Using filamet jam sensor such as the Bigtreetech Encoder wheel
+#define FilamentEncoder //Using filamet jam sensor such as the Bigtreetech Encoder wheel
 
 
 // Advanced options - Not for most users
@@ -115,8 +115,8 @@
    Melzi board users may only select ABL_BI for bilinear leveling
    If a probe is enabled and nothing selected here, defaults to Bilinear
 */
-#define ABL_BI
-//#define ABL_UBL
+//#define ABL_BI
+#define ABL_UBL
 
 /*
    For melzi boards these options allow you to cusomize what you want to do.
