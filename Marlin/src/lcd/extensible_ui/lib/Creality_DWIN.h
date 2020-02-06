@@ -62,7 +62,7 @@ namespace ExtUI {
 #define HotendPID_D 0x125E
 
 #define BedPID_P 0x1262
-#define BedPID_I 0x1264
+#define BedPID_I 0x1266
 #define BedPID_D 0x126A
 
 #define	HeatPercentIcon		0x1024

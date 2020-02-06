@@ -345,7 +345,7 @@ void onIdle()
 				}
 				else if (getActualTemp_celsius(H0) >= getTargetTemp_celsius(H0) && NozzleTempStatus[2])
 				{
-					SERIAL_ECHOPAIR("\n ***NozzleTempStatus[2] =", (int)NozzleTempStatus[2]);
+					SERIAL_ECHOLNPAIR("***NozzleTempStatus[2] =", (int)NozzleTempStatus[2]);
 					NozzleTempStatus[2] = 0;
 					TPShowStatus = true;
 					rtscheck.RTS_SndData(4, ExchFlmntIcon);
@@ -752,7 +752,7 @@ void RTSSHOW::RTS_HandleData()
 		recdat.head[1] = FHTWO;
 		return;
 	}
-	SERIAL_ECHO("== Checkkey==");
+	SERIAL_ECHOLN("== Checkkey==");
 	SERIAL_ECHOLN(Checkkey);
 
   #if (ENABLED(MachineCRX) && DISABLED(Force10SProDisplay)) || ENABLED(ForceCRXDisplay)
@@ -793,7 +793,7 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
         InforShowStatus = false;
         CardRecbuf.recordcount = -1;
         RTS_SDCardUpate(false, false);
-        SERIAL_ECHO("\n Handle Data PrintFile 1 Setting Screen ");
+        SERIAL_ECHOLN("Handle Data PrintFile 1 Setting Screen ");
         RTS_SndData(ExchangePageBase + 46, ExchangepageAddr);
       }
       else if (recdat.data[0] == 2) // return after printing result.
@@ -810,14 +810,14 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
         RTS_SndData(0, Timehour);
         RTS_SndData(0, Timemin);
 
-        SERIAL_ECHO("\n Handle Data PrintFile 2 Setting Screen ");
+        SERIAL_ECHOLN("Handle Data PrintFile 2 Setting Screen ");
         RTS_SndData(ExchangePageBase + 45, ExchangepageAddr); //exchange to 45 page
       }
       else if (recdat.data[0] == 3) // Temperature control
       {
         InforShowStatus = true;
         TPShowStatus = false;
-        SERIAL_ECHO("\n Handle Data PrintFile 3 Setting Screen ");
+        SERIAL_ECHOLN("Handle Data PrintFile 3 Setting Screen ");
         if (FanStatus)
           RTS_SndData(ExchangePageBase + 58, ExchangepageAddr); //exchange to 58 page, the fans off
         else
@@ -835,7 +835,7 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
       }
       else if (recdat.data[0] == 2)
       {
-        SERIAL_ECHO("\n Handle Data Adjust 2 Setting Screen ");
+        SERIAL_ECHOLN("Handle Data Adjust 2 Setting Screen ");
         InforShowStatus = true;
         if (PrinterStatusKey[1] == 3) // during heating
         {
@@ -1323,7 +1323,7 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
         }
         default:
         {
-          SERIAL_ECHOPAIR("Unsupported Option Selected", recdat.data[0]);
+          SERIAL_ECHOLNPAIR("Unsupported Option Selected", recdat.data[0]);
         }
       }
 
@@ -1471,7 +1471,7 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
 
     case LanguageChoice:
 
-      SERIAL_ECHOPAIR("\n ***recdat.data[0] =", recdat.data[0]);
+      SERIAL_ECHOLNPAIR("\n ***recdat.data[0] =", recdat.data[0]);
       /*if(recdat.data[0]==1) {
           settings.save();
         }
@@ -1936,6 +1936,14 @@ void onConfigurationStoreRead(bool success)
 #if HAS_PID_HEATING
   void OnPidTuning(const result_t rst) {
     // Called for temperature PID tuning result
+    rtscheck.RTS_SndData(pid_hotendAutoTemp, HotendPID_AutoTmp);
+    rtscheck.RTS_SndData(pid_bedAutoTemp, BedPID_AutoTmp);
+    rtscheck.RTS_SndData((unsigned int)(getPIDValues_Kp(E0) * 10), HotendPID_P);
+    rtscheck.RTS_SndData((unsigned int)(getPIDValues_Ki(E0) * 10), HotendPID_I);
+    rtscheck.RTS_SndData((unsigned int)(getPIDValues_Kd(E0) * 10), HotendPID_D);
+    rtscheck.RTS_SndData((unsigned int)(getBedPIDValues_Kp() * 10), BedPID_P);
+    rtscheck.RTS_SndData((unsigned int)(getBedPIDValues_Ki() * 10), BedPID_I);
+    rtscheck.RTS_SndData((unsigned int)(getBedPIDValues_Kd() * 10), BedPID_D);
   }
 #endif
 
