@@ -38,8 +38,10 @@ namespace ExtUI
   bool reEntryPrevent = false;
   uint16_t idleThrottling = 0;
 
-  uint16_t pid_hotendAutoTemp = 150;
-  uint16_t pid_bedAutoTemp = 70;
+  #if HAS_PID_HEATING
+    uint16_t pid_hotendAutoTemp = 150;
+    uint16_t pid_bedAutoTemp = 70;
+  #endif
 
 short swapByteOrder(unsigned short us)
 {
@@ -302,11 +304,11 @@ void onIdle()
 			rtscheck.RTS_SndData(getActualTemp_celsius(BED), Bedtemp);
       rtscheck.RTS_SndData(getTargetTemp_celsius(H0), NozzlePreheat);
 			rtscheck.RTS_SndData(getTargetTemp_celsius(BED), BedPreheat);
-			rtscheck.RTS_SndData(getFlowPercentage(E0) * 100, Flowrate);
-      rtscheck.RTS_SndData(getAxisSteps_per_mm(X) * 100, StepMM_X);
-      rtscheck.RTS_SndData(getAxisSteps_per_mm(Y) * 100, StepMM_Y);
-      rtscheck.RTS_SndData(getAxisSteps_per_mm(Z) * 100, StepMM_Z);
-      rtscheck.RTS_SndData(getAxisSteps_per_mm(E0) * 100, StepMM_E);
+			rtscheck.RTS_SndData((unsigned int)(getFlowPercentage(E0) * 100), Flowrate);
+      rtscheck.RTS_SndData((unsigned int)(getAxisSteps_per_mm(X) * 10), StepMM_X);
+      rtscheck.RTS_SndData((unsigned int)(getAxisSteps_per_mm(Y) * 10), StepMM_Y);
+      rtscheck.RTS_SndData((unsigned int)(getAxisSteps_per_mm(Z) * 10), StepMM_Z);
+      rtscheck.RTS_SndData((unsigned int)(getAxisSteps_per_mm(E0) * 10), StepMM_E);
 
       #if HAS_BED_PROBE
         rtscheck.RTS_SndData(getProbeOffset_mm(X) * 100, ProbeOffset_X);
@@ -317,12 +319,12 @@ void onIdle()
       #if HAS_PID_HEATING
         rtscheck.RTS_SndData(pid_hotendAutoTemp, HotendPID_AutoTmp);
         rtscheck.RTS_SndData(pid_bedAutoTemp, BedPID_AutoTmp);
-        rtscheck.RTS_SndData((getPIDValues_Kp(E0) * 10), HotendPID_P, VarAddr_W);
-        rtscheck.RTS_SndData((getPIDValues_Ki(E0) * 10), HotendPID_I, VarAddr_W);
-        rtscheck.RTS_SndData((getPIDValues_Kd(E0) * 10), HotendPID_D, VarAddr_W);
-        rtscheck.RTS_SndData((getBedPIDValues_Kp() * 10), BedPID_P, VarAddr_W);
-        rtscheck.RTS_SndData((getBedPIDValues_Ki() * 10), BedPID_I, VarAddr_W);
-        rtscheck.RTS_SndData((getBedPIDValues_Kd() * 10), BedPID_D, VarAddr_W);
+        rtscheck.RTS_SndData((unsigned int)(getPIDValues_Kp(E0) * 10), HotendPID_P);
+        rtscheck.RTS_SndData((unsigned int)(getPIDValues_Ki(E0) * 10), HotendPID_I);
+        rtscheck.RTS_SndData((unsigned int)(getPIDValues_Kd(E0) * 10), HotendPID_D);
+        rtscheck.RTS_SndData((unsigned int)(getBedPIDValues_Kp() * 10), BedPID_P);
+        rtscheck.RTS_SndData((unsigned int)(getBedPIDValues_Ki() * 10), BedPID_I);
+        rtscheck.RTS_SndData((unsigned int)(getBedPIDValues_Kd() * 10), BedPID_D);
       #endif
 
 			if (NozzleTempStatus[0] || NozzleTempStatus[2]) //statuse of loadfilement and unloadfinement when temperature is less than
@@ -736,7 +738,7 @@ void RTSSHOW::RTS_HandleData()
     case BedPID_P :
     case BedPID_I :
     case BedPID_D :
-    Checkkey = ManualSetTemp;
+      Checkkey = ManualSetTemp;
     break;
   }
 
@@ -1053,38 +1055,65 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
         setTargetTemp_celsius((float)recdat.data[0], BED);
       else if (recdat.addr == Flowrate)
         setFlow_percent((int16_t)recdat.data[0], getActiveTool());
-      else if (recdat.addr == StepMM_X)
-        setAxisSteps_per_mm((float)recdat.data[0], X);
-      else if (recdat.addr == StepMM_Y)
-        setAxisSteps_per_mm((float)recdat.data[0], Y);
-      else if (recdat.addr == StepMM_Z)
-        setAxisSteps_per_mm((float)recdat.data[0], Z);
-      else if (recdat.addr == StepMM_E) {
-        setAxisSteps_per_mm((float)recdat.data[0], E0);
-        setAxisSteps_per_mm((float)recdat.data[0], E1);
+      #if HAS_PID_HEATING
+        else if (recdat.addr == HotendPID_AutoTmp)
+          pid_hotendAutoTemp = (uint16_t)recdat.data[0];
+        else if (recdat.addr == BedPID_AutoTmp)
+          pid_bedAutoTemp = (uint16_t)recdat.data[0];
+      #endif
+      else {
+        float tmp_float_handling;
+        if (recdat.data[0] >= 32768)
+        {
+          tmp_float_handling = ((float)recdat.data[0] - 65536) / 100;
+        }
+        else
+        {
+          tmp_float_handling = ((float)recdat.data[0]) / 100;
+        }
+        if (recdat.addr == StepMM_X) {
+          setAxisSteps_per_mm(tmp_float_handling*10, X);
+        }
+        else if (recdat.addr == StepMM_Y) {
+          setAxisSteps_per_mm(tmp_float_handling*10, Y);
+        }
+        else if (recdat.addr == StepMM_Z) {
+          setAxisSteps_per_mm(tmp_float_handling*10, Z);
+        }
+        else if (recdat.addr == StepMM_E) {
+          setAxisSteps_per_mm(tmp_float_handling*10, E0);
+          setAxisSteps_per_mm(tmp_float_handling*10, E1);
+        }
+        else if (recdat.addr == ProbeOffset_X) {
+          setProbeOffset_mm(tmp_float_handling, X);
+        }
+        else if (recdat.addr == ProbeOffset_Y) {
+          setProbeOffset_mm(tmp_float_handling, Y);
+        }
+        else if (recdat.addr == ProbeOffset_Z) {
+          setProbeOffset_mm(tmp_float_handling, Z);
+        }
+        #if HAS_PID_HEATING
+          else if (recdat.addr == HotendPID_P) {
+            setPIDValues(tmp_float_handling*10, getPIDValues_Ki(getActiveTool()), getPIDValues_Kd(getActiveTool()), getActiveTool());
+          }
+          else if (recdat.addr == HotendPID_I) {
+            setPIDValues(getPIDValues_Kp(getActiveTool()), tmp_float_handling*10, getPIDValues_Kd(getActiveTool()), getActiveTool());
+          }
+          else if (recdat.addr == HotendPID_D) {
+            setPIDValues(getPIDValues_Kp(getActiveTool()), getPIDValues_Ki(getActiveTool()), tmp_float_handling*10, getActiveTool());
+          }
+          else if (recdat.addr == BedPID_P) {
+            setBedPIDValues(tmp_float_handling*10, getBedPIDValues_Ki(), getBedPIDValues_Kd());
+          }
+          else if (recdat.addr == BedPID_I) {
+            setBedPIDValues(getBedPIDValues_Kp(), tmp_float_handling*10, getBedPIDValues_Kd());
+          }
+          else if (recdat.addr == BedPID_D) {
+            setBedPIDValues(getBedPIDValues_Kp(), getBedPIDValues_Ki(), tmp_float_handling*10);
+          }
+        #endif
       }
-      else if (recdat.addr == ProbeOffset_X)
-        setAxisSteps_per_mm((float)recdat.data[0], X);
-      else if (recdat.addr == ProbeOffset_Y)
-        setAxisSteps_per_mm((float)recdat.data[0], Y);
-      else if (recdat.addr == ProbeOffset_Z)
-        setAxisSteps_per_mm((float)recdat.data[0], Z);
-      else if (recdat.addr == HotendPID_AutoTmp)
-        pid_hotendAutoTemp = (float)recdat.data[0];
-      else if (recdat.addr == BedPID_AutoTmp)
-        pid_bedAutoTemp = (float)recdat.data[0];
-      else if (recdat.addr == HotendPID_P)
-        setPIDValues((float)recdat.data[0], getPIDValues_Ki(getActiveTool()), getPIDValues_Kd(getActiveTool()), getActiveTool());
-      else if (recdat.addr == HotendPID_I)
-        setPIDValues(getPIDValues_Kp(getActiveTool()), (float)recdat.data[0], getPIDValues_Kd(getActiveTool()), getActiveTool());
-      else if (recdat.addr == HotendPID_D)
-        setPIDValues(getPIDValues_Kp(getActiveTool()), getPIDValues_Ki(getActiveTool()), (float)recdat.data[0], getActiveTool());
-      else if (recdat.addr == BedPID_P)
-        setBedPIDValues((float)recdat.data[0], getBedPIDValues_Ki(), getBedPIDValues_Kd());
-      else if (recdat.addr == BedPID_I)
-        setBedPIDValues(getBedPIDValues_Kp(), (float)recdat.data[0], getBedPIDValues_Kd());
-      else if (recdat.addr == BedPID_D)
-        setBedPIDValues(getBedPIDValues_Kp(), getBedPIDValues_Ki(), (float)recdat.data[0]);
       break;
 
     case Setting:
@@ -1458,10 +1487,12 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
         case 1:
           SERIAL_ECHOLN("English Already Set");
           break;
-        case 2:
-          //PID Hotend
-          startPIDTune(pid_hotendAutoTemp, getActiveTool());
-          break;
+        #if HAS_PID_HEATING
+          case 2:
+            //PID Hotend
+            startPIDTune(pid_hotendAutoTemp, getActiveTool());
+            break;
+        #endif
         case 3:
           //Init EEPROM
           injectCommands_P(PSTR("M502\nM500"));
@@ -1470,9 +1501,15 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
           //BLTouch Reset
           injectCommands_P(PSTR("M999\nM280P0S160"));
           break;
-        case 5:
-          //PID Bed
-          startBedPIDTune(pid_bedAutoTemp);
+        #if HAS_PID_HEATING
+          case 5:
+            //PID Bed
+            startBedPIDTune(pid_bedAutoTemp);
+            break;
+        #endif
+        case 6:
+          //Store Settings
+          injectCommands_P(PSTR("M500"));
           break;
         default:
           SERIAL_ECHOLN("Invalid Option");
