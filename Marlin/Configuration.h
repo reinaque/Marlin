@@ -12,11 +12,11 @@
 //#define MachineCR20Pro
 //#define MachineCR10S
 //#define MachineCR10SV2
-#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
+//#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
 //#define MachineCR10SProV2 // Second Gen 10S Pro with BLTouch wired to Z Max
 //#define MachineCRX
 //#define MachineCR10Max
-//#define MachineS4
+#define MachineS4
 //#define MachineS5
 //#define MachineCR2020 // Industrial Series 2020
 
@@ -56,7 +56,7 @@
  */
 
  //#define EZRstruder
- //#define Bondtech
+ #define Bondtech
  //#define E3DTitan
  //#define E3DHemera
 
@@ -66,8 +66,8 @@
    Choose bed type below. If you have an extenrally controlled
    ac bed, leave both disabled
 */
-//#define BedAC
-#define BedDC
+#define BedAC
+//#define BedDC
 
 //#define SolidBedMounts //Removed a few LCD options to save some memory since not needed with solid mounts
 
@@ -134,12 +134,12 @@
 //#define MachineCR10Orig // Forces Melzi board
 //#define Melzi_To_SBoardUpgrade // Upgrade Melzi board to 10S board
 //#define CrealitySilentBoard // Creality board with TMC2208 Standalone drivers. Disables Linear Advance
-//#define SKR13 // 32 bit board - assumes 2208 drivers
+#define SKR13 // 32 bit board - assumes 2208 drivers
 //#define SKRPRO11
 //#define I2C_EEPROM  // use I2C EEPROM on SRK PRO v1.1 e.g AT24C256
 
-//#define SKR_2209
-//#define SKR_UART // Configure SKR board with drivers in UART mode
+#define SKR_2209
+#define SKR_UART // Configure SKR board with drivers in UART mode
 //#define SKR13_ReverseSteppers // Some users reported directions backwards than others on SKR with various drivers.
 #define DualZ // Uses 5th driver on CRX or SKR boards as Z2
 
