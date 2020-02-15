@@ -41,9 +41,9 @@
 
    Mosquito assumes E3D Groovemount setup using the above as well
 */
-#define HotendStock
+//#define HotendStock
 //#define HotendE3D
-//#define HotendMosquito
+#define HotendMosquito
 
 //Enable this if you have an all metal hotend capable of 300c
 #define HotendAllMetal
