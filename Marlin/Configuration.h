@@ -10,13 +10,13 @@
 //#define MachineEnder4
 //#define MachineCR20 //Buzzer doesnt work
 //#define MachineCR20Pro
-//#define MachineCR10S
+#define MachineCR10S
 //#define MachineCR10SV2
 //#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
 //#define MachineCR10SProV2 // Second Gen 10S Pro with BLTouch wired to Z Max
 //#define MachineCRX
 //#define MachineCR10Max
-#define MachineS4
+//#define MachineS4
 //#define MachineS5
 //#define MachineCR2020 // Industrial Series 2020
 
@@ -41,9 +41,9 @@
 
    Mosquito assumes E3D Groovemount setup using the above as well
 */
-//#define HotendStock
+#define HotendStock
 //#define HotendE3D
-#define HotendMosquito
+//#define HotendMosquito
 
 //Enable this if you have an all metal hotend capable of 300c
 #define HotendAllMetal
@@ -56,7 +56,7 @@
  */
 
  //#define EZRstruder
- #define Bondtech
+ //#define Bondtech
  //#define E3DTitan
  //#define E3DHemera
 
@@ -66,8 +66,8 @@
    Choose bed type below. If you have an extenrally controlled
    ac bed, leave both disabled
 */
-#define BedAC
-//#define BedDC
+//#define BedAC
+#define BedDC
 
 //#define SolidBedMounts //Removed a few LCD options to save some memory since not needed with solid mounts
 
@@ -77,7 +77,7 @@
 */
 //#define ABL_EZABL // TH3D EZABL or Any NO Sensor
 //#define ABL_NCSW //Creality ABL or Any NC Sensor
-#define ABL_BLTOUCH
+//#define ABL_BLTOUCH
 //#define ABL_TOUCH_MI // Uncomment ABL_TOUCH_MI to use Touch-MI sensor by hotends.fr
 
 //#define CREALITY_ABL_MOUNT //Using creality ABL mount
@@ -100,7 +100,7 @@
 //#define AddonFilSensor //Adds a filamnt runout sensor to the CR20 or Ender 4
 //#define lerdgeFilSensor //Using lerdge filament sensor, which is opposite polarity to stock
 //#define DualFilSensors //Using dual filament sensors on XMax and YMAX
-#define FilamentEncoder //Using filamet jam sensor such as the Bigtreetech Encoder wheel
+//#define FilamentEncoder //Using filamet jam sensor such as the Bigtreetech Encoder wheel
 
 
 // Advanced options - Not for most users
@@ -117,7 +117,7 @@
    If a probe is enabled and nothing selected here, defaults to Bilinear
 */
 //#define ABL_BI
-#define ABL_UBL
+//#define ABL_UBL
 
 /*
    For melzi boards these options allow you to cusomize what you want to do.
@@ -134,14 +134,14 @@
 //#define MachineCR10Orig // Forces Melzi board
 //#define Melzi_To_SBoardUpgrade // Upgrade Melzi board to 10S board
 //#define CrealitySilentBoard // Creality board with TMC2208 Standalone drivers. Disables Linear Advance
-#define SKR13 // 32 bit board - assumes 2208 drivers
+//#define SKR13 // 32 bit board - assumes 2208 drivers
 //#define SKRPRO11
 //#define I2C_EEPROM  // use I2C EEPROM on SRK PRO v1.1 e.g AT24C256
 
-#define SKR_2209
-#define SKR_UART // Configure SKR board with drivers in UART mode
+//#define SKR_2209
+//#define SKR_UART // Configure SKR board with drivers in UART mode
 //#define SKR13_ReverseSteppers // Some users reported directions backwards than others on SKR with various drivers.
-#define DualZ // Uses 5th driver on CRX or SKR boards as Z2
+//#define DualZ // Uses 5th driver on CRX or SKR boards as Z2
 
  /*
   *
@@ -152,7 +152,7 @@
   //#define Dual_CyclopsSingleNozzle
   //#define Dual_ChimeraDualNozzle
 
-#define POWER_LOSS_RECOVERY //Large and does not fit with any other features on Melzi, or UBL on Atmega
+//#define POWER_LOSS_RECOVERY //Large and does not fit with any other features on Melzi, or UBL on Atmega
 
 /*
    Choose a probe grid density below. Faster probes less points, but is less accurate.
