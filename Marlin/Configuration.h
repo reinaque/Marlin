@@ -78,6 +78,7 @@
 //#define ABL_EZABL // TH3D EZABL or Any NO Sensor
 //#define ABL_NCSW //Creality ABL or Any NC Sensor
 #define ABL_BLTOUCH
+//#define ABL_TOUCH_MI // Uncomment ABL_TOUCH_MI to use Touch-MI sensor by hotends.fr
 
 //#define CREALITY_ABL_MOUNT //Using creality ABL mount
 //#define E3D_DUALFAN_MOUNT // Using HD Modular mount as above with 2 5015 blowers and sensor on the right
@@ -278,7 +279,7 @@
 
 #if(ENABLED(MachineCR10SPro))
   #define MachineCR10Std
-  #if DISABLED(ABL_BLTOUCH, ABL_EZABL)
+  #if DISABLED(ABL_BLTOUCH, ABL_EZABL, ABL_TOUCH_MI)
     #define ABL_NCSW
   #endif
   #if DISABLED(ABL_UBL)
@@ -350,7 +351,7 @@
   #define HotendStock
 #endif
 
-#if ANY(ABL_EZABL, ABL_NCSW, ABL_BLTOUCH) && NONE(ABL_UBL, ABL_BI)
+#if ANY(ABL_EZABL, ABL_NCSW, ABL_BLTOUCH, ABL_TOUCH_MI) && NONE(ABL_UBL, ABL_BI)
   #define ABL_BI
 #endif
 
@@ -1407,7 +1408,7 @@
  * Use G29 repeatedly, adjusting the Z height at each point with movement commands
  * or (with LCD_BED_LEVELING) the LCD controller.
  */
-#if DISABLED(ABL_EZABL, ABL_NCSW, ABL_BLTOUCH)
+#if DISABLED(ABL_EZABL, ABL_NCSW, ABL_BLTOUCH, ABL_TOUCH_MI)
   #define PROBE_MANUALLY
   #define MANUAL_PROBE_START_Z 0.2
 #endif
@@ -1449,7 +1450,9 @@
  * Also requires: BABYSTEPPING, BABYSTEP_ZPROBE_OFFSET, Z_SAFE_HOMING,
  *                and a minimum Z_HOMING_HEIGHT of 10.
  */
-//#define TOUCH_MI_PROBE
+#if ENABLED(ABL_TOUCH_MI)
+  #define TOUCH_MI_PROBE
+#endif
 #if ENABLED(TOUCH_MI_PROBE)
   #define TOUCH_MI_RETRACT_Z 0.5                  // Height at which the probe retracts
   //#define TOUCH_MI_DEPLOY_XPOS (X_MAX_BED + 2)  // For a magnet on the right side of the bed
@@ -1601,16 +1604,18 @@
 #endif
 #define Z_CLEARANCE_BETWEEN_PROBES  5 // Z Clearance between probe points
 #define Z_CLEARANCE_MULTI_PROBE     5 // Z Clearance between multiple probes
-#define Z_AFTER_PROBING           5 // Z position after probing is done
+#if DISABLED(TOUCH_MI_PROBE)
+  #define Z_AFTER_PROBING           5 // Z position after probing is done
+#endif
 
 #define Z_PROBE_LOW_POINT          -3 // Farthest distance below the trigger-point to go before stopping
 
 // For M851 give a range for adjusting the Z probe offset
-#define Z_PROBE_OFFSET_RANGE_MIN -20
-#define Z_PROBE_OFFSET_RANGE_MAX 20
+#define Z_PROBE_OFFSET_RANGE_MIN -9
+#define Z_PROBE_OFFSET_RANGE_MAX 9
 
 // Enable the M48 repeatability test to test probe accuracy
-#if ANY(ABL_EZABL, ABL_BLTOUCH, ABL_NCSW) && DISABLED(MachineCR10Orig)
+#if ANY(ABL_EZABL, ABL_BLTOUCH, ABL_NCSW, ABL_TOUCH_MI) && DISABLED(MachineCR10Orig)
   #define Z_MIN_PROBE_REPEATABILITY_TEST
 #endif
 
@@ -1723,11 +1728,11 @@
 //#define UNKNOWN_Z_NO_RAISE // Don't raise Z (lower the bed) if Z is "unknown." For beds that fall when Z is powered off.
 #if ANY(MachineEnder5, MachineEnder5Plus)
   #define Z_HOMING_HEIGHT 0
+#elif ENABLED(TOUCH_MI_PROBE)
+  #define Z_HOMING_HEIGHT 10
 #else
-#define Z_HOMING_HEIGHT 4  // (in mm) Minimal z height before homing (G28) for Z clearance above the bed, clamps, ...
-                             // Be sure you have this distance over your Z_MAX_POS in case.
+  #define Z_HOMING_HEIGHT 4  // (in mm) Minimal z height before homing (G28) for Z clearance above the bed, clamps, ...
 #endif
-
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
 #if ANY(MachineEnder5, MachineEnder5Plus)
@@ -1744,7 +1749,7 @@
 
 // The size of the print bed
 
-#if NONE(ABL_EZABL, ABL_BLTOUCH, ABL_NCSW)
+#if NONE(ABL_EZABL, ABL_BLTOUCH, ABL_NCSW, ABL_TOUCH_MI)
 
   #if ENABLED(MachineMini)
     #define X_BED_SIZE 300
@@ -1870,8 +1875,13 @@
 #endif
 
 // Travel limits (mm) after homing, corresponding to endstop positions.
-#define X_MIN_POS 0
-#define Y_MIN_POS 0
+#if ENABLED(TOUCH_MI_PROBE)
+  #define X_MIN_POS -4
+  #define Y_MIN_POS -10
+#else
+  #define X_MIN_POS 0
+  #define Y_MIN_POS 0
+#endif
 #define Z_MIN_POS 0
 #define X_MAX_POS X_BED_SIZE
 #define Y_MAX_POS Y_BED_SIZE
@@ -1997,14 +2007,14 @@
  */
 //#define AUTO_BED_LEVELING_3POINT
 //#define AUTO_BED_LEVELING_LINEAR
-#if (ENABLED(ABL_EZABL)|| ENABLED(ABL_BLTOUCH) || ENABLED(ABL_NCSW))
-  #if ((ENABLED(ABL_UBL)))
+#if ANY(ABL_EZABL, ABL_BLTOUCH, ABL_NCSW, ABL_TOUCH_MI)
+  #if ENABLED(ABL_UBL)
     #define AUTO_BED_LEVELING_UBL
     #endif
-    #if ((ENABLED(ABL_BI)))
+    #if ENABLED(ABL_BI)
       #define AUTO_BED_LEVELING_BILINEAR
     #endif
-#elif NONE(OrigLA)
+#elif DISABLED(OrigLA, MachineCR10Orig)
   #define MESH_BED_LEVELING
 #else
   #define ClipClearance 0
@@ -2136,7 +2146,7 @@
  * Add a bed leveling sub-menu for ABL or MBL.
  * Include a guided procedure if manual probing is enabled.
  */
-#if NONE(ABL_EZABL, ABL_NCSW, ABL_BLTOUCH) && (DISABLED(MachineCRX) || ENABLED(GraphicLCD))
+#if NONE(ABL_EZABL, ABL_NCSW, ABL_BLTOUCH, ABL_TOUCH_MI) && (DISABLED(MachineCRX) || ENABLED(GraphicLCD))
 #define LCD_BED_LEVELING
 #endif
 
@@ -2184,7 +2194,7 @@
 // - Move the Z probe (or nozzle) to a defined XY point before Z Homing when homing all axes (G28).
 // - Prevent Z homing when the Z probe is outside bed area.
 //
-#if ANY(ABL_EZABL, ABL_NCSW, ABL_BLTOUCH)
+#if ANY(ABL_EZABL, ABL_NCSW, ABL_BLTOUCH, ABL_TOUCH_MI)
   #define Z_SAFE_HOMING
 #endif
 
