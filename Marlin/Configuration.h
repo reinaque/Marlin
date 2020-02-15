@@ -451,9 +451,9 @@
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
   #if ENABLED(SKR13)
-    #define MOTHERBOARD BOARD_BIGTREE_SKR_V1_3
+    #define MOTHERBOARD BOARD_BTT_SKR_V1_3
   #elif ENABLED(SKRPRO11)
-    #define MOTHERBOARD BOARD_BIGTREE_SKR_PRO_V1_1
+    #define MOTHERBOARD BOARD_BTT_SKR_PRO_V1_1
   #elif (ENABLED(MachineCR10Orig) && DISABLED(Melzi_To_SBoardUpgrade))
     #define MOTHERBOARD BOARD_MELZI_CREALITY
   #else
