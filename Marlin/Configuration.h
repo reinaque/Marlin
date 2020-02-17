@@ -12,7 +12,7 @@
 //#define MachineCR20Pro
 //#define MachineCR10S
 //#define MachineCR10SV2
-#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
+//#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
 //#define MachineCR10SProV2 // Second Gen 10S Pro with BLTouch wired to Z Max
 //#define MachineCRX
 //#define MachineCR10Max
@@ -24,7 +24,7 @@
 // See video here : https://www.youtube.com/watch?v=fIl5X2ffdyo
 
 //#define MachineEnder2
-//#define MachineEnder3
+#define MachineEnder3
 //#define MachineEnder5
 //#define MachineMini
 //#define MachineCR10
@@ -89,7 +89,7 @@
  * Screen options
  */
 
-//#define OrigLCD // Upgraded mainboard with single cable Ender LCD
+#define OrigLCD // Upgraded mainboard with single cable Ender LCD
 //#define GraphicLCD //Full graphics LCD for Ender 4, CR-X or CR10SPro
 //#define Big_UI // Lightweight status screen, saves CPU cycles
 
@@ -134,12 +134,12 @@
 //#define MachineCR10Orig // Forces Melzi board
 //#define Melzi_To_SBoardUpgrade // Upgrade Melzi board to 10S board
 //#define CrealitySilentBoard // Creality board with TMC2208 Standalone drivers. Disables Linear Advance
-//#define SKR13 // 32 bit board - assumes 2208 drivers
+#define SKR13 // 32 bit board - assumes 2208 drivers
 //#define SKRPRO11
 //#define I2C_EEPROM  // use I2C EEPROM on SRK PRO v1.1 e.g AT24C256
 
-//#define SKR_2209
-//#define SKR_UART // Configure SKR board with drivers in UART mode
+#define SKR_2209
+#define SKR_UART // Configure SKR board with drivers in UART mode
 //#define SKR13_ReverseSteppers // Some users reported directions backwards than others on SKR with various drivers.
 //#define DualZ // Uses 5th driver on CRX or SKR boards as Z2
 
@@ -152,7 +152,7 @@
   //#define Dual_CyclopsSingleNozzle
   //#define Dual_ChimeraDualNozzle
 
-//#define POWER_LOSS_RECOVERY //Large and does not fit with any other features on Melzi, or UBL on Atmega
+#define POWER_LOSS_RECOVERY //Large and does not fit with any other features on Melzi, or UBL on Atmega
 
 /*
    Choose a probe grid density below. Faster probes less points, but is less accurate.
@@ -1749,130 +1749,106 @@
 
 // The size of the print bed
 
-#if NONE(ABL_EZABL, ABL_BLTOUCH, ABL_NCSW, ABL_TOUCH_MI)
-
   #if ENABLED(MachineMini)
     #define X_BED_SIZE 300
     #define Y_BED_SIZE 220
     #define Z_MAX_POS 300
+    #define X_MAX_POS 300
+    #define Y_MAX_POS 220
+    #define ClipClearance 15
   #elif ENABLED(MachineEnder2)
     #define X_BED_SIZE 150
     #define Y_BED_SIZE 150
     #define Z_MAX_POS 200
+    #define X_MAX_POS 150
+    #define Y_MAX_POS 150
+    #define ClipClearance 15
   #elif ENABLED(MachineEnder3)
     #define X_BED_SIZE 230
     #define Y_BED_SIZE 230
     #define Z_MAX_POS 250
-  #elif ANY(MachineEnder4, MachineEnder5)
+    #define X_MAX_POS 250
+    #define Y_MAX_POS 250
+    #define ClipClearance 15
+  #elif(ANY(MachineEnder4, MachineEnder5))
     #define X_BED_SIZE 230
     #define Y_BED_SIZE 225
     #define Z_MAX_POS 300
+    #define X_MAX_POS 220
+    #define Y_MAX_POS 220
+    #define ClipClearance 15
   #elif ENABLED(MachineEnder5Plus)
     #define X_BED_SIZE 360
     #define Y_BED_SIZE 360
     #define Z_MAX_POS 400
+    #define X_MAX_POS 360
+    #define Y_MAX_POS 360
+    #define ClipClearance 25
   #elif ENABLED(MachineCR20)
     #define X_BED_SIZE 230
     #define Y_BED_SIZE 230
     #define Z_MAX_POS 250
+    #define X_MAX_POS 240
+    #define Y_MAX_POS 240
+    #define ClipClearance 15
+  #elif ENABLED(MachineCRX)
+    #define X_BED_SIZE 300
+    #define Y_BED_SIZE 300
+    #define Z_MAX_POS 400
+    #define X_MAX_POS 315
+    #define Y_MAX_POS 308
+    #define ClipClearance 15
+  #elif ENABLED(MachineCR10SPro)
+    #define X_BED_SIZE 300
+    #define Y_BED_SIZE 300
+    #define Z_MAX_POS 400
+    #define X_MAX_POS 315
+    #define Y_MAX_POS 310
+    #define ClipClearance 10
+  #elif ENABLED(MachineCR10SProV2)
+    #define X_BED_SIZE 300
+    #define Y_BED_SIZE 300
+    #define Z_MAX_POS 400
+    #define X_MAX_POS 315
+    #define Y_MAX_POS 310
+    #define ClipClearance 5
   #elif ENABLED(MachineCR10Std)
     #define X_BED_SIZE 300
     #define Y_BED_SIZE 300
     #define Z_MAX_POS 400
-  #elif ENABLED(MachineS4)
+    #define X_MAX_POS 315
+    #define Y_MAX_POS 310
+    #define ClipClearance 15
+  #elif ENABLED( MachineS4)
     #define X_BED_SIZE 400
     #define Y_BED_SIZE 400
     #define Z_MAX_POS 400
+    #define X_MAX_POS 410
+    #define Y_MAX_POS 400
+    #define ClipClearance 15
   #elif ENABLED(MachineCR10Max)
     #define X_BED_SIZE 450
     #define Y_BED_SIZE 450
     #define Z_MAX_POS 470
+    #define X_MAX_POS 450
+    #define Y_MAX_POS 450
+    #define ClipClearance 15
   #elif ENABLED(MachineS5)
     #define X_BED_SIZE 500
     #define Y_BED_SIZE 500
     #define Z_MAX_POS 500
-  #elif ENABLED(MachineCR2020)
-    #define X_BED_SIZE 200
-    #define Y_BED_SIZE 202.5
-    #define Z_MAX_POS 210
-  #endif
-  // The size of the print bed
-  #define ClipClearance 0
-#else
-
-  #if ENABLED(MachineMini)
-    #define X_BED_SIZE 300
-    #define Y_BED_SIZE 220
-    #define Z_MAX_POS 300
-    #define ClipClearance 15
-  #elif(ENABLED(MachineEnder2))
-    #define X_BED_SIZE 150
-    #define Y_BED_SIZE 150
-    #define Z_MAX_POS 200
-    #define ClipClearance 15
-  #elif ENABLED(MachineEnder3)
-    #define X_BED_SIZE 250
-    #define Y_BED_SIZE 250
-    #define Z_MAX_POS 250
-    #define ClipClearance 15
-  #elif(ANY(MachineEnder4, MachineEnder5))
-    #define X_BED_SIZE 220
-    #define Y_BED_SIZE 220
-    #define Z_MAX_POS 300
-    #define ClipClearance 15
-  #elif ENABLED(MachineEnder5Plus)
-    #define X_BED_SIZE 360
-    #define Y_BED_SIZE 360
-    #define Z_MAX_POS 400
-    #define ClipClearance 25
-  #elif ENABLED(MachineCR20)
-    #define X_BED_SIZE 240
-    #define Y_BED_SIZE 240
-    #define Z_MAX_POS 250
-    #define ClipClearance 15
-  #elif (ENABLED(MachineCRX))
-    #define X_BED_SIZE 315
-    #define Y_BED_SIZE 308
-    #define Z_MAX_POS 400
-    #define ClipClearance 15
-  #elif (ENABLED(MachineCR10SPro))
-    #define X_BED_SIZE 315
-    #define Y_BED_SIZE 310
-    #define Z_MAX_POS 400
-    #define ClipClearance 10
-  #elif (ENABLED(MachineCR10SProV2))
-    #define X_BED_SIZE 315
-    #define Y_BED_SIZE 310
-    #define Z_MAX_POS 400
-    #define ClipClearance 5
-  #elif (ENABLED(MachineCR10Std))
-    #define X_BED_SIZE 315
-    #define Y_BED_SIZE 310
-    #define Z_MAX_POS 400
-    #define ClipClearance 15
-  #elif ENABLED( MachineS4)
-    #define X_BED_SIZE 410
-    #define Y_BED_SIZE 400
-    #define Z_MAX_POS 400
-    #define ClipClearance 15
-  #elif ENABLED(MachineCR10Max)
-    #define X_BED_SIZE 450
-    #define Y_BED_SIZE 450
-    #define Z_MAX_POS 470
-    #define ClipClearance 15
-  #elif ENABLED(MachineS5)
-    #define X_BED_SIZE 510
-    #define Y_BED_SIZE 500
-    #define Z_MAX_POS 500
+    #define X_MAX_POS 510
+    #define Y_MAX_POS 500
     #define ClipClearance 20
   #elif ENABLED(MachineCR2020)
     #define X_BED_SIZE 200
     #define Y_BED_SIZE 202.5
     #define Z_MAX_POS 210
+    #define X_MAX_POS 200
+    #define Y_MAX_POS 202.5
     #define ClipClearance 15
   #endif
 
-#endif
 
 // Travel limits (mm) after homing, corresponding to endstop positions.
 #if ENABLED(TOUCH_MI_PROBE)
@@ -1883,8 +1859,12 @@
   #define Y_MIN_POS 0
 #endif
 #define Z_MIN_POS 0
-#define X_MAX_POS X_BED_SIZE
-#define Y_MAX_POS Y_BED_SIZE
+#ifndef X_MAX_POS
+  #define X_MAX_POS X_BED_SIZE
+#endif
+#ifndef Y_MAX_POS
+  #define Y_MAX_POS Y_BED_SIZE
+#endif
 
 /**
  * Software Endstops
@@ -2224,7 +2204,7 @@
 
 // Homing speeds (mm/m)
 #define HOMING_FEEDRATE_XY (50*60)
-#define HOMING_FEEDRATE_Z  (4*60)
+#define HOMING_FEEDRATE_Z  (2*60)
 
 // Validate that endstops are triggered on homing moves
 #define VALIDATE_HOMING_ENDSTOPS
