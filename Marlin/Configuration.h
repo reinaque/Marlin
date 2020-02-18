@@ -12,7 +12,7 @@
 //#define MachineCR20Pro
 //#define MachineCR10S
 //#define MachineCR10SV2
-//#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
+#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
 //#define MachineCR10SProV2 // Second Gen 10S Pro with BLTouch wired to Z Max
 //#define MachineCRX
 //#define MachineCR10Max
@@ -24,7 +24,7 @@
 // See video here : https://www.youtube.com/watch?v=fIl5X2ffdyo
 
 //#define MachineEnder2
-#define MachineEnder3
+//#define MachineEnder3
 //#define MachineEnder5
 //#define MachineMini
 //#define MachineCR10
@@ -89,7 +89,7 @@
  * Screen options
  */
 
-#define OrigLCD // Upgraded mainboard with single cable Ender LCD
+//#define OrigLCD // Upgraded mainboard with single cable Ender LCD
 //#define GraphicLCD //Full graphics LCD for Ender 4, CR-X or CR10SPro
 //#define Big_UI // Lightweight status screen, saves CPU cycles
 
@@ -100,7 +100,7 @@
 //#define AddonFilSensor //Adds a filamnt runout sensor to the CR20 or Ender 4
 //#define lerdgeFilSensor //Using lerdge filament sensor, which is opposite polarity to stock
 //#define DualFilSensors //Using dual filament sensors on XMax and YMAX
-//#define FilamentEncoder //Using filamet jam sensor such as the Bigtreetech Encoder wheel
+#define FilamentEncoder //Using filamet jam sensor such as the Bigtreetech Encoder wheel
 
 
 // Advanced options - Not for most users
@@ -134,12 +134,12 @@
 //#define MachineCR10Orig // Forces Melzi board
 //#define Melzi_To_SBoardUpgrade // Upgrade Melzi board to 10S board
 //#define CrealitySilentBoard // Creality board with TMC2208 Standalone drivers. Disables Linear Advance
-#define SKR13 // 32 bit board - assumes 2208 drivers
+//#define SKR13 // 32 bit board - assumes 2208 drivers
 //#define SKRPRO11
 //#define I2C_EEPROM  // use I2C EEPROM on SRK PRO v1.1 e.g AT24C256
 
-#define SKR_2209
-#define SKR_UART // Configure SKR board with drivers in UART mode
+//#define SKR_2209
+//#define SKR_UART // Configure SKR board with drivers in UART mode
 //#define SKR13_ReverseSteppers // Some users reported directions backwards than others on SKR with various drivers.
 //#define DualZ // Uses 5th driver on CRX or SKR boards as Z2
 
@@ -1597,7 +1597,7 @@
  * Example: `M851 Z-5` with a CLEARANCE of 4  =>  9mm from bed to nozzle.
  *     But: `M851 Z+1` with a CLEARANCE of 2  =>  2mm from bed to nozzle.
  */
-#if ANY(MachineEnder5, MachineEnder5Plus)
+#if ENABLED(MachineEnder5)
   #define Z_CLEARANCE_DEPLOY_PROBE   0 // Z Clearance for Deploy/Stow
 #else
   #define Z_CLEARANCE_DEPLOY_PROBE   10 // Z Clearance for Deploy/Stow
@@ -1726,7 +1726,7 @@
 //#define NO_MOTION_BEFORE_HOMING  // Inhibit movement until all axes have been homed
 
 //#define UNKNOWN_Z_NO_RAISE // Don't raise Z (lower the bed) if Z is "unknown." For beds that fall when Z is powered off.
-#if ANY(MachineEnder5, MachineEnder5Plus)
+#if ANY(MachineEnder5)
   #define Z_HOMING_HEIGHT 0
 #elif ENABLED(TOUCH_MI_PROBE)
   #define Z_HOMING_HEIGHT 10
@@ -1847,6 +1847,10 @@
     #define X_MAX_POS 200
     #define Y_MAX_POS 202.5
     #define ClipClearance 15
+  #endif
+
+  #ifndef ClipClearance
+    #define ClipClearance 0
   #endif
 
 
@@ -1990,14 +1994,11 @@
 #if ANY(ABL_EZABL, ABL_BLTOUCH, ABL_NCSW, ABL_TOUCH_MI)
   #if ENABLED(ABL_UBL)
     #define AUTO_BED_LEVELING_UBL
-    #endif
-    #if ENABLED(ABL_BI)
-      #define AUTO_BED_LEVELING_BILINEAR
-    #endif
+  #elif ENABLED(ABL_BI)
+    #define AUTO_BED_LEVELING_BILINEAR
+  #endif
 #elif DISABLED(OrigLA, MachineCR10Orig)
   #define MESH_BED_LEVELING
-#else
-  #define ClipClearance 0
 #endif
 /**
  * Normally G28 leaves leveling disabled on completion. Enable
@@ -2178,33 +2179,14 @@
   #define Z_SAFE_HOMING
 #endif
 
-#if ENABLED(E3D_DUALFAN_MOUNT)
-  #define HOMING_ADD 15
-#else
-  #define HOMING_ADD 0
-#endif
 #if ENABLED(Z_SAFE_HOMING)
-  #if ENABLED(MachineS4)
-    #define Z_SAFE_HOMING_X_POINT 60 + HOMING_ADD   // X point for Z homing when homing all axis (G28).
-    #define Z_SAFE_HOMING_Y_POINT 60 + HOMING_ADD    // Y point for Z homing when homing all axis (G28).
-  #elif ANY(MachineS5, MachineCR10Max)
-    #define Z_SAFE_HOMING_X_POINT 80 + HOMING_ADD    // X point for Z homing when homing all axis (G28).
-    #define Z_SAFE_HOMING_Y_POINT 80 + HOMING_ADD    // Y point for Z homing when homing all axis (G28).
-  #elif ENABLED(MachineCRX)
-    #define Z_SAFE_HOMING_X_POINT 50 + HOMING_ADD    // X point for Z homing when homing all axis (G28).
-    #define Z_SAFE_HOMING_Y_POINT 70 + HOMING_ADD    // Y point for Z homing when homing all axis (G28).
-  #elif ANY(MachineEnder5, MachineEnder5Plus)
-    #define Z_SAFE_HOMING_X_POINT 110 + HOMING_ADD    // X point for Z homing when homing all axis (G28).
-    #define Z_SAFE_HOMING_Y_POINT 110 + HOMING_ADD    // Y point for Z homing when homing all axis (G28).
-  #else
-    #define Z_SAFE_HOMING_X_POINT 50 + HOMING_ADD    // X point for Z homing when homing all axis (G28).
-    #define Z_SAFE_HOMING_Y_POINT 50 + HOMING_ADD    // Y point for Z homing when homing all axis (G28).
-  #endif
+  #define Z_SAFE_HOMING_X_POINT ((X_BED_SIZE) / 2)    // X point for Z homing when homing all axes (G28).
+  #define Z_SAFE_HOMING_Y_POINT ((Y_BED_SIZE) / 2)    // Y point for Z homing when homing all axes (G28).
 #endif
 
 // Homing speeds (mm/m)
 #define HOMING_FEEDRATE_XY (50*60)
-#define HOMING_FEEDRATE_Z  (2*60)
+#define HOMING_FEEDRATE_Z  (4*60)
 
 // Validate that endstops are triggered on homing moves
 #define VALIDATE_HOMING_ENDSTOPS
