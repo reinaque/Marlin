@@ -363,17 +363,16 @@ void onIdle()
 				if (AutoHomeIconNum > 9)
 					AutoHomeIconNum = 0;
 			}
-
-    if(rtscheck.recdat.addr != DisplayZaxis && rtscheck.recdat.addr != DisplayYaxis && rtscheck.recdat.addr != DisplayZaxis) {
-			rtscheck.RTS_SndData(10 * getAxisPosition_mm((axis_t)X), DisplayXaxis);
-		  rtscheck.RTS_SndData(10 * getAxisPosition_mm((axis_t)Y), DisplayYaxis);
-		  rtscheck.RTS_SndData(10 * getAxisPosition_mm((axis_t)Z), DisplayZaxis);
-    }
-
 	}
   void yield();
 	if (rtscheck.RTS_RecData() > 0)
 		rtscheck.RTS_HandleData();
+
+  if(rtscheck.recdat.addr != DisplayZaxis && rtscheck.recdat.addr != DisplayYaxis && rtscheck.recdat.addr != DisplayZaxis) {
+		rtscheck.RTS_SndData(10 * getAxisPosition_mm((axis_t)X), DisplayXaxis);
+	  rtscheck.RTS_SndData(10 * getAxisPosition_mm((axis_t)Y), DisplayYaxis);
+		rtscheck.RTS_SndData(10 * getAxisPosition_mm((axis_t)Z), DisplayZaxis);
+  }
   reEntryPrevent = false;
 }
 
@@ -1154,11 +1153,7 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
       }
       else if (recdat.data[0] == 3) //Move
       {
-        //InforShowoStatus = false;
         AxisPagenum = 0;
-        RTS_SndData(10 * getAxisPosition_mm((axis_t)X), DisplayXaxis);
-        RTS_SndData(10 * getAxisPosition_mm((axis_t)Y), DisplayYaxis);
-        RTS_SndData(10 * getAxisPosition_mm((axis_t)Z), DisplayZaxis);
         delay_ms(2);
         RTS_SndData(ExchangePageBase + 71, ExchangepageAddr);
       }
@@ -1371,19 +1366,12 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
         break;
       }
 
-      static float targetPos = ((float)recdat.data[0]) / 10;
+      float targetPos = ((float)recdat.data[0]) / 10;
 
-      if (targetPos < min)
-        targetPos = min;
-      else if (targetPos > max)
-        targetPos = max;
-
+      constrain(targetPos, min, max);
+      SERIAL_ECHOLNPAIR("Target : ", targetPos);
+      SERIAL_ECHOLNPAIR("Pre Current : ", getAxisPosition_mm((axis_t)X));
       setAxisPosition_mm(targetPos, axis);
-      delay_ms(1);
-      RTS_SndData(10 * getAxisPosition_mm((axis_t)X), DisplayXaxis);
-      RTS_SndData(10 * getAxisPosition_mm((axis_t)Y), DisplayYaxis);
-      RTS_SndData(10 * getAxisPosition_mm((axis_t)Z), DisplayZaxis);
-      delay_ms(1);
       waitway = 0;
       RTS_SndData(10, FilenameIcon);
       break;
@@ -1937,13 +1925,13 @@ void onConfigurationStoreRead(bool success)
   void OnPidTuning(const result_t rst) {
     // Called for temperature PID tuning result
     rtscheck.RTS_SndData(pid_hotendAutoTemp, HotendPID_AutoTmp);
-    rtscheck.RTS_SndData(pid_bedAutoTemp, BedPID_AutoTmp);
-    rtscheck.RTS_SndData((unsigned int)(getPIDValues_Kp(E0) * 10), HotendPID_P);
-    rtscheck.RTS_SndData((unsigned int)(getPIDValues_Ki(E0) * 10), HotendPID_I);
-    rtscheck.RTS_SndData((unsigned int)(getPIDValues_Kd(E0) * 10), HotendPID_D);
-    rtscheck.RTS_SndData((unsigned int)(getBedPIDValues_Kp() * 10), BedPID_P);
-    rtscheck.RTS_SndData((unsigned int)(getBedPIDValues_Ki() * 10), BedPID_I);
-    rtscheck.RTS_SndData((unsigned int)(getBedPIDValues_Kd() * 10), BedPID_D);
+        rtscheck.RTS_SndData(pid_bedAutoTemp, BedPID_AutoTmp);
+        rtscheck.RTS_SndData((unsigned int)(getPIDValues_Kp(E0) * 10), HotendPID_P);
+        rtscheck.RTS_SndData((unsigned int)(getPIDValues_Ki(E0) * 10), HotendPID_I);
+        rtscheck.RTS_SndData((unsigned int)(getPIDValues_Kd(E0) * 10), HotendPID_D);
+        rtscheck.RTS_SndData((unsigned int)(getBedPIDValues_Kp() * 10), BedPID_P);
+        rtscheck.RTS_SndData((unsigned int)(getBedPIDValues_Ki() * 10), BedPID_I);
+        rtscheck.RTS_SndData((unsigned int)(getBedPIDValues_Kd() * 10), BedPID_D);
   }
 #endif
 

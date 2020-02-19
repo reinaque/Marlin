@@ -304,8 +304,10 @@
   #if DISABLED(ABL_NCSW) && DISABLED(ABL_EZABL)
     #define ABL_BLTOUCH
   #endif
-  #define Y_STOP_PIN 14
-  #define X_STOP_PIN 3
+  #if NONE(SKR13, SKRPRO11)
+    #define Y_STOP_PIN 14
+    #define X_STOP_PIN 3
+  #endif
   #define lerdgeFilSensor
   #if DISABLED(ABL_UBL)
     #define ABL_BI
@@ -317,7 +319,7 @@
   #define lerdgeFilSensor
 #endif
 
-#if ANY(MachineCR10SV2, MachineCR10Max, MachineCR10SProV2) && ANY(ABL_EZABL, ABL_NCSW, ABL_BLTOUCH, ABL_TOUCH_MI)
+#if ANY(MachineCR10SV2, MachineCR10Max, MachineCR10SProV2) && ANY(ABL_EZABL, ABL_NCSW, ABL_BLTOUCH, ABL_TOUCH_MI) && NONE(SKR13, SKRPRO11)
   #define Z_STOP_PIN 19
 #endif
 
