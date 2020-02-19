@@ -43,32 +43,6 @@ namespace ExtUI
     uint16_t pid_bedAutoTemp = 70;
   #endif
 
-short swapByteOrder(unsigned short us)
-{
-    us = (us >> 8) |
-         (us << 8);
-}
-
-int swapByteOrder(unsigned int ui)
-{
-    ui = (ui >> 24) |
-         ((ui<<8) & 0x00FF0000) |
-         ((ui>>8) & 0x0000FF00) |
-         (ui << 24);
-}
-
-long swapByteOrder(unsigned long ull)
-{
-    ull = (ull >> 56) |
-          ((ull<<40) & 0x00FF000000000000) |
-          ((ull<<24) & 0x0000FF0000000000) |
-          ((ull<<8) & 0x000000FF00000000) |
-          ((ull>>8) & 0x00000000FF000000) |
-          ((ull>>24) & 0x0000000000FF0000) |
-          ((ull>>40) & 0x000000000000FF00) |
-          (ull << 56);
-}
-
 void onStartup()
 {
 	DWIN_SERIAL.begin(115200);
@@ -1154,7 +1128,6 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
       else if (recdat.data[0] == 3) //Move
       {
         AxisPagenum = 0;
-        delay_ms(2);
         RTS_SndData(ExchangePageBase + 71, ExchangepageAddr);
       }
       else if (recdat.data[0] == 4) //Language
@@ -1319,6 +1292,7 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
         default:
         {
           SERIAL_ECHOLNPAIR("Unsupported Option Selected", recdat.data[0]);
+          break;
         }
       }
 
@@ -1326,6 +1300,7 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
       break;
 
     case XYZEaxis:
+    {
       axis_t axis;
       float min, max;
       waitway = 4;
@@ -1368,13 +1343,15 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
 
       float targetPos = ((float)recdat.data[0]) / 10;
 
-      constrain(targetPos, min, max);
-      SERIAL_ECHOLNPAIR("Target : ", targetPos);
-      SERIAL_ECHOLNPAIR("Pre Current : ", getAxisPosition_mm((axis_t)X));
+      if (targetPos < min)
+        targetPos = min;
+      else if (targetPos > max)
+        targetPos = max;
       setAxisPosition_mm(targetPos, axis);
       waitway = 0;
       RTS_SndData(10, FilenameIcon);
       break;
+    }
 
     case Filement:
 
@@ -1390,7 +1367,7 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
         }
 
         switch(recdat.data[0])
-          {
+        {
           case 1 : // Unload filement1
           {
             setAxisPosition_mm((getAxisPosition_mm(E0) - ChangeMaterialbuf[0]), E0);
@@ -1477,26 +1454,26 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
           break;
         #if HAS_PID_HEATING
           case 2:
-            //PID Hotend
+            SERIAL_ECHOLN("Hotend PID");
             startPIDTune(pid_hotendAutoTemp, getActiveTool());
             break;
         #endif
         case 3:
-          //Init EEPROM
+          SERIAL_ECHOLN("Init EEPROM");
           injectCommands_P(PSTR("M502\nM500"));
           break;
         case 4:
-          //BLTouch Reset
+          SERIAL_ECHOLN("BLTouch Reset");
           injectCommands_P(PSTR("M999\nM280P0S160"));
           break;
         #if HAS_PID_HEATING
           case 5:
-            //PID Bed
+            SERIAL_ECHOLN("Bed PID");
             startBedPIDTune(pid_bedAutoTemp);
             break;
         #endif
         case 6:
-          //Store Settings
+          SERIAL_ECHOLN("Store Settings");
           injectCommands_P(PSTR("M500"));
           break;
         default:
@@ -1687,13 +1664,12 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
 	recdat.head[1] = FHTWO;
 }
 
-void onPrinterKilled(PGM_P msg, PGM_P component) {
+void onPrinterKilled(PGM_P killMsg, PGM_P component) {
   SERIAL_ECHOLN("***kill***");
   //First we send screen available on old versions of software
 	rtscheck.RTS_SndData(ExchangePageBase + 15, ExchangepageAddr);
   //Then we send the new one Creality added in 1.70.1
 	rtscheck.RTS_SndData(ExchangePageBase + 88, ExchangepageAddr);
-  delay_ms(3);
   int j = 0;
   char outmsg[40];
   while (j<4)
@@ -1701,7 +1677,7 @@ void onPrinterKilled(PGM_P msg, PGM_P component) {
     outmsg[j] = '*';
     j++;
   }
-  while (const char c = pgm_read_byte(msg++)) {
+  while (const char c = pgm_read_byte(killMsg++)) {
     outmsg[j] = c;
     j++;
   }
@@ -1733,7 +1709,6 @@ void onMediaRemoved()
 }
 
 void onPlayTone(const uint16_t frequency, const uint16_t duration) {
-
 	SERIAL_ECHOLN("***CPlay Tone***");
   rtscheck.RTS_SndData(StartSoundSet, SoundAddr);
 }
@@ -1760,18 +1735,6 @@ void onPrintTimerStopped()
 	SERIAL_ECHOLN("==onPrintTimerStopped==");
   if(waitway == 3)
     return;
-
-#if ENABLED(SDSUPPORT) && ENABLED(POWEROFF_SAVE_SD_FILE)
-	card.openPowerOffFile(power_off_info.power_off_filename, O_CREAT | O_WRITE | O_TRUNC | O_SYNC);
-	power_off_info.valid_head = 0;
-	power_off_info.valid_foot = 0;
-	if (card.savePowerOffInfo(&power_off_info, sizeof(power_off_info)) == -1)
-	{
-		SERIAL_PROTOCOLLN("Stop to Write power off file failed.");
-	}
-	card.closePowerOffFile();
-	power_off_commands_count = 0;
-#endif
 
 #if FAN_COUNT > 0
 	for (uint8_t i = 0; i < FAN_COUNT; i++)
@@ -1812,11 +1775,11 @@ void onUserConfirmRequired(const char *const msg)
   rtscheck.RTS_SndData(ExchangePageBase + 78, ExchangepageAddr);
 	SERIAL_ECHOLN("==onUserConfirmRequired==");
 }
-void onStatusChanged(const char *const msg)
+void onStatusChanged(const char *const statMsg)
 {
   for (int j = 0; j < 40; j++) // Clear old message
     rtscheck.RTS_SndData(' ', StatusMessageString+j);
-  rtscheck.RTS_SndData(msg, StatusMessageString);
+  rtscheck.RTS_SndData(statMsg, StatusMessageString);
 }
 void onFactoryReset()
 {
