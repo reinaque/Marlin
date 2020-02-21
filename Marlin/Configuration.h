@@ -154,6 +154,9 @@
 
 #define POWER_LOSS_RECOVERY //Large and does not fit with any other features on Melzi, or UBL on Atmega
 
+//Add filtering to endstops when long extensions are used. Makes homing more reliable but less accurate.
+//#define CableExtensionNoiseFilter
+
 /*
    Choose a probe grid density below. Faster probes less points, but is less accurate.
    Extreme is for extremely uneven or tilted bed surfaces.
@@ -1192,7 +1195,7 @@
  *
  * :[2,3,4,5,6,7]
  */
-#if ENABLED(MachineEnder5Plus)
+#if ANY(MachineEnder5Plus, CableExtensionNoiseFilter)
   #define ENDSTOP_NOISE_THRESHOLD 2
 #endif
 
