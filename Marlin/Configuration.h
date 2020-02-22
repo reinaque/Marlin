@@ -12,7 +12,7 @@
 //#define MachineCR20Pro
 //#define MachineCR10S
 //#define MachineCR10SV2
-#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
+//#define MachineCR10SPro // Graphics LCD Requires soldering R64 and R66
 //#define MachineCR10SProV2 // Second Gen 10S Pro with BLTouch wired to Z Max
 //#define MachineCRX
 //#define MachineCR10Max
@@ -41,12 +41,12 @@
 
    Mosquito assumes E3D Groovemount setup using the above as well
 */
-#define HotendStock
+//#define HotendStock
 //#define HotendE3D
 //#define HotendMosquito
 
 //Enable this if you have an all metal hotend capable of 300c
-#define HotendAllMetal
+//#define HotendAllMetal
 
 // Enable this if you used a plug and play creality e3d kit with the Creality thermistor
 //#define CrealityThermistor
@@ -67,7 +67,7 @@
    ac bed, leave both disabled
 */
 //#define BedAC
-#define BedDC
+//#define BedDC
 
 //#define SolidBedMounts //Removed a few LCD options to save some memory since not needed with solid mounts
 
@@ -77,7 +77,7 @@
 */
 //#define ABL_EZABL // TH3D EZABL or Any NO Sensor
 //#define ABL_NCSW //Creality ABL or Any NC Sensor
-#define ABL_BLTOUCH
+//#define ABL_BLTOUCH
 //#define ABL_TOUCH_MI // Uncomment ABL_TOUCH_MI to use Touch-MI sensor by hotends.fr
 
 //#define CREALITY_ABL_MOUNT //Using creality ABL mount
@@ -100,7 +100,7 @@
 //#define AddonFilSensor //Adds a filamnt runout sensor to the CR20 or Ender 4
 //#define lerdgeFilSensor //Using lerdge filament sensor, which is opposite polarity to stock
 //#define DualFilSensors //Using dual filament sensors on XMax and YMAX
-#define FilamentEncoder //Using filamet jam sensor such as the Bigtreetech Encoder wheel
+//#define FilamentEncoder //Using filamet jam sensor such as the Bigtreetech Encoder wheel
 
 
 // Advanced options - Not for most users
@@ -152,7 +152,7 @@
   //#define Dual_CyclopsSingleNozzle
   //#define Dual_ChimeraDualNozzle
 
-#define POWER_LOSS_RECOVERY //Large and does not fit with any other features on Melzi, or UBL on Atmega
+//#define POWER_LOSS_RECOVERY //Large and does not fit with any other features on Melzi, or UBL on Atmega
 
 //Add filtering to endstops when long extensions are used. Makes homing more reliable but less accurate.
 //#define CableExtensionNoiseFilter
@@ -164,7 +164,7 @@
    Standard is recommended in most other scenarios.
 */
 //#define MeshFast
-#define MeshStd
+//#define MeshStd
 //#define MeshFine
 //#define MeshExtreme
 
