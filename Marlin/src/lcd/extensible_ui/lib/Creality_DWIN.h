@@ -110,7 +110,7 @@ namespace ExtUI {
   #define StatusMessageString 0x20E8
 #endif
 
-#if ANY(SKR13, SKRPRO11)
+#if ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11)
   #define DWIN_SERIAL DGUS_SERIAL
 #else
   #define DWIN_SERIAL Serial2

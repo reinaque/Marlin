@@ -679,7 +679,6 @@ void RTSSHOW::RTS_HandleData()
 	{
 		if (recdat.addr == Addrbuf[i])
 		{
-
       if (Addrbuf[i] == NzBdSet || Addrbuf[i] == NozzlePreheat || Addrbuf[i] == BedPreheat || Addrbuf[i] == Flowrate)
 				Checkkey = ManualSetTemp;
 			else if (Addrbuf[i] >= Stopprint && Addrbuf[i] <= Resumeprint)
@@ -1002,6 +1001,7 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
       break;
 
     case ManualSetTemp:
+    SERIAL_ECHOLN("ManualSetTemp");
       if (recdat.addr == NzBdSet)
       {
         if (recdat.data[0] == 0)
@@ -1057,15 +1057,17 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
           setAxisSteps_per_mm(tmp_float_handling*10, E0);
           setAxisSteps_per_mm(tmp_float_handling*10, E1);
         }
-        else if (recdat.addr == ProbeOffset_X) {
-          setProbeOffset_mm(tmp_float_handling, X);
-        }
-        else if (recdat.addr == ProbeOffset_Y) {
-          setProbeOffset_mm(tmp_float_handling, Y);
-        }
-        else if (recdat.addr == ProbeOffset_Z) {
-          setProbeOffset_mm(tmp_float_handling, Z);
-        }
+        #if HAS_BED_PROBE
+          else if (recdat.addr == ProbeOffset_X) {
+            setProbeOffset_mm(tmp_float_handling, X);
+          }
+          else if (recdat.addr == ProbeOffset_Y) {
+            setProbeOffset_mm(tmp_float_handling, Y);
+          }
+          else if (recdat.addr == ProbeOffset_Z) {
+            setProbeOffset_mm(tmp_float_handling, Z);
+          }
+        #endif
         #if HAS_PID_HEATING
           else if (recdat.addr == HotendPID_P) {
             setPIDValues(tmp_float_handling*10, getPIDValues_Ki(getActiveTool()), getPIDValues_Kd(getActiveTool()), getActiveTool());
@@ -1444,41 +1446,50 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
           injectCommands_P(PSTR("M300"));
         }*/
       // may at some point use language change screens to save eeprom explicitly
+      SERIAL_ECHOLN("InLangChoice");
       switch(recdat.data[0])
       {
-        case 0:
+        case 0: {
           SERIAL_ECHOLN("Chinese Not Supported");
           break;
-        case 1:
+        }
+        case 1: {
           SERIAL_ECHOLN("English Already Set");
           break;
+        }
         #if HAS_PID_HEATING
-          case 2:
+          case 2: {
             SERIAL_ECHOLN("Hotend PID");
             startPIDTune(pid_hotendAutoTemp, getActiveTool());
             break;
+          }
         #endif
-        case 3:
+        case 3: {
           SERIAL_ECHOLN("Init EEPROM");
           injectCommands_P(PSTR("M502\nM500"));
           break;
-        case 4:
+        }
+        case 4: {
           SERIAL_ECHOLN("BLTouch Reset");
           injectCommands_P(PSTR("M999\nM280P0S160"));
           break;
+        }
         #if HAS_PID_HEATING
-          case 5:
+          case 5: {
             SERIAL_ECHOLN("Bed PID");
             startBedPIDTune(pid_bedAutoTemp);
             break;
+          }
         #endif
-        case 6:
+        case 6: {
           SERIAL_ECHOLN("Store Settings");
           injectCommands_P(PSTR("M500"));
           break;
-        default:
+        }
+        default: {
           SERIAL_ECHOLN("Invalid Option");
           break;
+        }
       }
       break;
     case No_Filement:

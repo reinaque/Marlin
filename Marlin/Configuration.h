@@ -134,8 +134,12 @@
 //#define MachineCR10Orig // Forces Melzi board
 //#define Melzi_To_SBoardUpgrade // Upgrade Melzi board to 10S board
 //#define CrealitySilentBoard // Creality board with TMC2208 Standalone drivers. Disables Linear Advance
+
 //#define SKR13 // 32 bit board - assumes 2208 drivers
+//#define SKR14
+//#define SKR14Turbo
 //#define SKRPRO11
+
 //#define I2C_EEPROM  // use I2C EEPROM on SRK PRO v1.1 e.g AT24C256
 
 //#define SKR_2209
@@ -307,7 +311,7 @@
   #if DISABLED(ABL_NCSW) && DISABLED(ABL_EZABL)
     #define ABL_BLTOUCH
   #endif
-  #if NONE(SKR13, SKRPRO11)
+  #if NONE(SKR13, SKR14, SKR14Turbo, SKRPRO11)
     #define Y_STOP_PIN 14
     #define X_STOP_PIN 3
   #endif
@@ -322,7 +326,7 @@
   #define lerdgeFilSensor
 #endif
 
-#if ANY(MachineCR10SV2, MachineCR10Max, MachineCR10SProV2) && ANY(ABL_EZABL, ABL_NCSW, ABL_BLTOUCH, ABL_TOUCH_MI) && NONE(SKR13, SKRPRO11)
+#if ANY(MachineCR10SV2, MachineCR10Max, MachineCR10SProV2) && ANY(ABL_EZABL, ABL_NCSW, ABL_BLTOUCH, ABL_TOUCH_MI) && NONE(SKR13, SKR14, SKR14Turbo, SKRPRO11)
   #define Z_STOP_PIN 19
 #endif
 
@@ -415,7 +419,7 @@
  *
  * :[-1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
-#if ANY(SKR13, SKRPRO11)
+#if ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11)
   #define SERIAL_PORT -1
 #else
   #define SERIAL_PORT 0
@@ -429,15 +433,17 @@
  * :[-1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
 
-#if ANY(SKR13, SKRPRO11) && NONE(MachineCR10SPro, MachineCRX, MachineEnder5Plus, MachineCR10Max) || (ENABLED(GraphicLCD) && NONE(Force10SProDisplay, ForceCRXDisplay))
-  #define SERIAL_PORT_2 1
-#elif ENABLED(SKR13)
+#if ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11) && NONE(MachineCR10SPro, MachineCRX, MachineEnder5Plus, MachineCR10Max) || (ENABLED(GraphicLCD) && NONE(Force10SProDisplay, ForceCRXDisplay))
+  #define SERIAL_PORT_2 0
+#elif ANY(SKR13, SKR14, SKR14Turbo)
   #define DGUS_SERIAL_PORT 0
 #elif ENABLED(SKR11PRO)
   #define DGUS_SERIAL_PORT 1
 #elif ANY(MachineCR10SPro, MachineCRX, MachineEnder5Plus, MachineCR10Max) && DISABLED(GraphicLCD)
   //#define DGUS_SERIAL_PORT 2
 #endif
+
+
 #define bDGUS_SERIAL_STATS_RX_BUFFER_OVERRUNS false
 
 /**
@@ -456,7 +462,11 @@
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #if ENABLED(SKR13)
+  #if ENABLED(SKR14Turbo)
+    #define MOTHERBOARD BOARD_BTT_SKR_V1_4_TURBO
+  #elif ENABLED(SKR14)
+    #define MOTHERBOARD BOARD_BTT_SKR_V1_4
+  #elif ENABLED(SKR13)
     #define MOTHERBOARD BOARD_BTT_SKR_V1_3
   #elif ENABLED(SKRPRO11)
     #define MOTHERBOARD BOARD_BTT_SKR_PRO_V1_1
@@ -1114,7 +1124,7 @@
  * :['A4988', 'A5984', 'DRV8825', 'LV8729', 'L6470', 'TB6560', 'TB6600', 'TMC2100', 'TMC2130', 'TMC2130_STANDALONE', 'TMC2160', 'TMC2160_STANDALONE', 'TMC2208', 'TMC2208_STANDALONE', 'TMC2209', 'TMC2209_STANDALONE', 'TMC26X', 'TMC26X_STANDALONE', 'TMC2660', 'TMC2660_STANDALONE', 'TMC5130', 'TMC5130_STANDALONE', 'TMC5160', 'TMC5160_STANDALONE']
  */
 
-#if ANY(SKR13, SKRPRO11, MachineCR10SV2, CrealitySilentBoard, MachineCR10SPro, MachineCR10SProV2, MachineCR10Max) && DISABLED(SKR_UART)
+#if ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11, MachineCR10SV2, CrealitySilentBoard, MachineCR10SPro, MachineCR10SProV2, MachineCR10Max) && DISABLED(SKR_UART)
   #if ENABLED(SKR_2209)
     #define X_DRIVER_TYPE  TMC2209_STANDALONE
     #define Y_DRIVER_TYPE  TMC2209_STANDALONE
@@ -1136,7 +1146,7 @@
       #define E1_DRIVER_TYPE TMC2208_STANDALONE
     #endif
   #endif
-#elif ANY(SKR13, SKRPRO11) && ENABLED(SKR_UART)
+#elif ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11) && ENABLED(SKR_UART)
   #if ENABLED(SKR_2209)
     #define X_DRIVER_TYPE  TMC2209
     #define Y_DRIVER_TYPE  TMC2209
@@ -1470,7 +1480,7 @@
     #define PROBING_FANS_OFF          // Turn fans off when probing
   #endif
 
-  #if ENABLED(MachineEnder4) && DISABLED(SKR13, SKRPRO11)
+  #if ENABLED(MachineEnder4) && NONE(SKR13, SKR14, SKR14Turbo, SKRPRO11)
     #define SOLENOID_PROBE PIN_15
   #endif
 #endif
@@ -1684,7 +1694,7 @@
     #define INVERT_E0_DIR true
     #define INVERT_E1_DIR false
   #endif
-#elif ANY(MachineCR10Orig, SKR13) && DISABLED(SKR13_ReverseSteppers)
+#elif ANY(MachineCR10Orig, SKR13, SKR14, SKR14Turbo) && DISABLED(SKR13_ReverseSteppers)
   #define INVERT_X_DIR true
   #define INVERT_Y_DIR true
   #define INVERT_Z_DIR false
@@ -1918,7 +1928,7 @@
 #endif
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
   #if ENABLED(DualFilSensors)
-    #if DISABLED(SKR13,SKRPRO11)
+    #if DISABLED(SKR13, SKR14, SKR14Turbo, SKRPRO11)
       #define NUM_RUNOUT_SENSORS   2     // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
     #endif
     #define FIL_RUNOUT2_PIN 15

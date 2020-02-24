@@ -672,7 +672,7 @@
    * differs, a mode set eeprom write will be completed at initialization.
    * Use the option below to force an eeprom write to a V3.1 probe regardless.
    */
-  #if NONE(SKR13, SKRPRO11)
+  #if NONE(SKR13, SKR14, SKR14Turbo, SKRPRO11)
     #define BLTOUCH_SET_5V_MODE
   #endif
   /**
@@ -806,7 +806,7 @@
 // Backlash Compensation
 // Adds extra movement to axes on direction-changes to account for backlash.
 //
-#if ANY(SKR13, SKRPRO11)
+#if ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11)
   #define BACKLASH_COMPENSATION
 #endif
 #if ENABLED(BACKLASH_COMPENSATION)
@@ -896,7 +896,7 @@
  * vibration and surface artifacts. The algorithm adapts to provide the best possible step smoothing at the
  * lowest stepping frequencies.
  */
-#if ANY(SKR13, SKRPRO11)
+#if ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11)
   #define ADAPTIVE_STEP_SMOOTHING
 #endif
 
@@ -1270,7 +1270,7 @@
 
   // A bigger font is available for edit items. Costs 3120 bytes of PROGMEM.
   // Western only. Not available for Cyrillic, Kana, Turkish, Greek, or Chinese.
-  #if ANY(SKR13, SKRPRO11)
+  #if ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11)
   #define USE_BIG_EDIT_FONT
   #endif
 
@@ -1324,14 +1324,14 @@
   //#define STATUS_FAN_FRAMES 3       // :[0,1,2,3,4] Number of fan animation frames
   //#define STATUS_HEAT_PERCENT       // Show heating in a progress bar
   //#define BOOT_MARLIN_LOGO_SMALL    // Show a smaller Marlin logo on the Boot Screen (saving 399 bytes of flash)
-  #if ANY(SKR13, SKRPRO11)
+  #if ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11)
     #define BOOT_MARLIN_LOGO_ANIMATED // Animated Marlin logo. Costs ~‭3260 (or ~940) bytes of PROGMEM.
   #else
     #define BOOT_MARLIN_LOGO_SMALL    // Show a smaller Marlin logo on the Boot Screen (saving 399 bytes of flash)
   #endif
   //#define GAMES_EASTER_EGG          // Add extra blank lines above the "Games" sub-menu
 
-  #if ANY(SKR13, SKRPRO11)
+  #if ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11)
     // Frivolous Game Options
     #define MARLIN_BRICKOUT
     #define MARLIN_INVADERS
@@ -1561,7 +1561,7 @@
  * See http://marlinfw.org/docs/features/lin_advance.html for full instructions.
  * Mention @Sebastianv650 on GitHub to alert the author of any issues.
  */
-#if NONE(MachineCR10Orig, LowMemoryBoard, MachineCR10SPro, MachineCR10Max, SKR13, MachineCR10SV2, CrealitySilentBoard) || ENABLED(OrigLA) || ENABLED(SKR13, SKR_UART) || ENABLED(SKRPRO11, SKR_UART)
+#if NONE(MachineCR10Orig, LowMemoryBoard, MachineCR10SPro, MachineCR10Max, SKR13, SKR14, SKR14Turbo, MachineCR10SV2, CrealitySilentBoard) || ENABLED(OrigLA) || (ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11) && ENABLED(SKR_UART))
   #define LIN_ADVANCE
 #endif
 #if ENABLED(LIN_ADVANCE)
@@ -1738,9 +1738,8 @@
  *
  * Override the default value based on the driver type set in Configuration.h.
  */
-#if ENABLED(SKR13, SKRPRO11)
-  //#define MINIMUM_STEPPER_PULSE 1
-#endif
+//#define MINIMUM_STEPPER_PULSE 1
+
 /**
  * Maximum stepping rate (in Hz) the stepper driver allows
  *  If undefined, defaults to 1MHz / (2 * MINIMUM_STEPPER_PULSE)
@@ -1784,7 +1783,7 @@
 #define MAX_CMD_SIZE 96
 #if(ENABLED(MachineCR10Orig) || ENABLED(LowMemoryBoard))
   #define BUFSIZE 2
-#elif ANY(SKR13, SKRPRO11)
+#elif ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11)
   #define BUFSIZE 8
 #else
   #define BUFSIZE 4
@@ -1796,7 +1795,7 @@
 // For debug-echo: 128 bytes for the optimal speed.
 // Other output doesn't need to be that speedy.
 // :[0, 2, 4, 8, 16, 32, 64, 128, 256]
-#if ANY(SKR13, SKRPRO11)
+#if ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11)
   #define TX_BUFFER_SIZE 32
 #else
   #define TX_BUFFER_SIZE 0
@@ -1878,7 +1877,7 @@
  * Note that M207 / M208 / M209 settings are saved to EEPROM.
  *
  */
- #if ANY(SKR13, SKRPRO11)
+ #if ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11)
   #define FWRETRACT
 #endif
 #if ENABLED(FWRETRACT)
@@ -2941,7 +2940,7 @@
  * Add G-codes M810-M819 to define and run G-code macros.
  * Macros are not saved to EEPROM.
  */
-#if ANY(SKR13, SKRPRO11)
+#if ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11)
   #define GCODE_MACROS
 #endif
 #if ENABLED(GCODE_MACROS)
