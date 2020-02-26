@@ -278,7 +278,8 @@ void onIdle()
 			rtscheck.RTS_SndData(getActualTemp_celsius(BED), Bedtemp);
       rtscheck.RTS_SndData(getTargetTemp_celsius(H0), NozzlePreheat);
 			rtscheck.RTS_SndData(getTargetTemp_celsius(BED), BedPreheat);
-			rtscheck.RTS_SndData((unsigned int)(getFlowPercentage(E0) * 100), Flowrate);
+			rtscheck.RTS_SndData((unsigned int)(getFlowPercentage(E0)), Flowrate);
+			//SERIAL_ECHOLNPAIR("getFlowPercentage =", (unsigned int)getFlowPercentage(E0));
       rtscheck.RTS_SndData((unsigned int)(getAxisSteps_per_mm(X) * 10), StepMM_X);
       rtscheck.RTS_SndData((unsigned int)(getAxisSteps_per_mm(Y) * 10), StepMM_Y);
       rtscheck.RTS_SndData((unsigned int)(getAxisSteps_per_mm(Z) * 10), StepMM_Z);
