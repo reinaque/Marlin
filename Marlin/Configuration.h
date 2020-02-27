@@ -141,6 +141,7 @@
 //#define SKRPRO11
 
 //#define I2C_EEPROM  // use I2C EEPROM on SRK PRO v1.1 e.g AT24C256
+//#define SKR14_PowerLossKit // Bigtreetech power loss kit for SKR14
 
 //#define SKR_2209
 //#define SKR_UART // Configure SKR board with drivers in UART mode
