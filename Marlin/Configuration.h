@@ -1536,38 +1536,34 @@
    #endif
 #elif ANY(MachineCR10SPro, MachineCR10Max) && ENABLED(HotendStock)
   #define NOZZLE_TO_PROBE_OFFSET { -27, 0, 0 }
+#elif (ANY(ABL_BLTOUCH, ABL_EZABL,ABL_NCSW) && ENABLED(E3DHemera))
+    #define NOZZLE_TO_PROBE_OFFSET { -63, 5, 0 }
 #elif ENABLED(MachineCR10SV2)
   #if ENABLED(ABL_BLTOUCH)
     #define NOZZLE_TO_PROBE_OFFSET { 45, 7, 0 }
   #elif ENABLED(ABL_EZABL) || ENABLED(ABL_NCSW)
     #define NOZZLE_TO_PROBE_OFFSET { 45, 7, 0 }
   #endif
-#else
-   #if (ENABLED(ABL_BLTOUCH) && ENABLED(HotendStock))
-     #define NOZZLE_TO_PROBE_OFFSET { -41, -8, 0 }
-   #endif
-
-  #if ((ENABLED(ABL_EZABL) || ENABLED(ABL_NCSW)) && ENABLED(HotendStock))
-    #if ENABLED(CREALITY_ABL_MOUNT)
-      #define NOZZLE_TO_PROBE_OFFSET { -55, -15, 0 }
-    #else
-      #define NOZZLE_TO_PROBE_OFFSET { -44, -10, 0 }
-    #endif
+#elif (ENABLED(ABL_BLTOUCH) && ENABLED(HotendStock))
+  #define NOZZLE_TO_PROBE_OFFSET { -41, -8, 0 }
+#elif ((ENABLED(ABL_EZABL) || ENABLED(ABL_NCSW)) && ENABLED(HotendStock))
+  #if ENABLED(CREALITY_ABL_MOUNT)
+    #define NOZZLE_TO_PROBE_OFFSET { -55, -15, 0 }
+  #else
+    #define NOZZLE_TO_PROBE_OFFSET { -44, -10, 0 }
   #endif
-
-
-   #if (ANY(ABL_BLTOUCH, ABL_EZABL,ABL_NCSW) && ANY(HotendE3D, HotendMosquito))
-    #if ENABLED(E3D_DUALFAN_MOUNT)
-      #if ENABLED(E3D_PROBEMOUNT_LEFT)
-        #define NOZZLE_TO_PROBE_OFFSET { -63, 5, 0 }
-      #else
-        #define NOZZLE_TO_PROBE_OFFSET { 63, 5, 0 }
-      #endif
+#elif (ANY(ABL_BLTOUCH, ABL_EZABL,ABL_NCSW) && ANY(HotendE3D, HotendMosquito))
+  #if ENABLED(E3D_DUALFAN_MOUNT)
+    #if ENABLED(E3D_PROBEMOUNT_LEFT)
+      #define NOZZLE_TO_PROBE_OFFSET { -63, 5, 0 }
     #else
-      #define NOZZLE_TO_PROBE_OFFSET { 32, 5, 0 }
+      #define NOZZLE_TO_PROBE_OFFSET { 63, 5, 0 }
     #endif
-   #endif
- #endif
+  #else
+    #define NOZZLE_TO_PROBE_OFFSET { 32, 5, 0 }
+  #endif
+#endif
+
 
 // Certain types of probes need to stay away from edges
 #if ENABLED(ABL_BLTOUCH)
@@ -1794,10 +1790,15 @@
     #define Y_MAX_POS 220
     #define ClipClearance 15
   #elif ENABLED(MachineEnder5Plus)
-    #define X_BED_SIZE 360
     #define Y_BED_SIZE 360
     #define Z_MAX_POS 400
-    #define X_MAX_POS 360
+    #if ENABLED(E3DHemera)
+      #define X_BED_SIZE 352
+      #define X_MAX_POS 352
+    #else
+      #define X_BED_SIZE 360
+      #define X_MAX_POS 360
+    #endif
     #define Y_MAX_POS 360
     #define ClipClearance 25
   #elif ENABLED(MachineCR20)
@@ -1952,6 +1953,8 @@
   // before executing the runout script. Useful for a sensor at the end of
   // a feed tube. Requires 4 bytes SRAM per sensor, plus 4 bytes overhead.
   #if ENABLED(FilamentEncoder)
+    #define FILAMENT_RUNOUT_DISTANCE_MM 12
+  #elif ANY(MachineEnder5Plus, MachineCR10SPro, MachineCR10SProV2)
     #define FILAMENT_RUNOUT_DISTANCE_MM 10
   #else
     #define FILAMENT_RUNOUT_DISTANCE_MM 5

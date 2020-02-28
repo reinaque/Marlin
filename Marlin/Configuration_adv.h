@@ -1958,7 +1958,7 @@
   #endif
   #define FILAMENT_CHANGE_UNLOAD_ACCEL        25  // (mm/s^2) Lower acceleration may allow a faster feedrate.
   #if ANY(MachineEnder5Plus, MachineCR10SPro, MachineCR10SProV2)
-    #define FILAMENT_CHANGE_UNLOAD_LENGTH      20
+    #define FILAMENT_CHANGE_UNLOAD_LENGTH      75
   #elif ENABLED(DirectDrive)
     #define FILAMENT_CHANGE_UNLOAD_LENGTH      125
   #elif ANY(MachineEnder5Plus, MachineCR10Max, MachineCR10S4, MachineCR10S5)
