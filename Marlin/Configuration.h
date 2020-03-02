@@ -1538,7 +1538,7 @@
 #elif ANY(MachineCR10SPro, MachineCR10Max) && ENABLED(HotendStock)
   #define NOZZLE_TO_PROBE_OFFSET { -27, 0, 0 }
 #elif (ANY(ABL_BLTOUCH, ABL_EZABL,ABL_NCSW) && ENABLED(E3DHemera))
-    #define NOZZLE_TO_PROBE_OFFSET { -63, 5, 0 }
+    #define NOZZLE_TO_PROBE_OFFSET { -40, 0, 0 }
 #elif ENABLED(MachineCR10SV2)
   #if ENABLED(ABL_BLTOUCH)
     #define NOZZLE_TO_PROBE_OFFSET { 45, 7, 0 }

@@ -918,8 +918,10 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
 
       if (WITHIN((tmp_zprobe_offset), Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX))
       {
-        babystepAxis_steps((400 * (getZOffset_mm() - tmp_zprobe_offset) * -1), (axis_t)Z);
-        setZOffset_mm(tmp_zprobe_offset);
+
+        smartAdjustAxis_steps(((getAxisSteps_per_mm(Z) * (getZOffset_mm() - tmp_zprobe_offset)) * -1), (axis_t)Z, false);
+        //babystepAxis_steps(((int)getAxisSteps_per_mm(Z) * (getZOffset_mm() - tmp_zprobe_offset) * -1), (axis_t)Z);
+        //setZOffset_mm(tmp_zprobe_offset);
         injectCommands_P((PSTR("M500")));
       }
       else
@@ -1178,8 +1180,9 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
         {
           if (WITHIN((getZOffset_mm() + 0.1), Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX))
           {
-            babystepAxis_steps(40, (axis_t)Z);
-            setZOffset_mm(getZOffset_mm() + 0.1);
+            smartAdjustAxis_steps((getAxisSteps_per_mm(Z) / 10), (axis_t)Z, false);
+            //SERIAL_ECHOLNPAIR("Babystep Pos Steps : ", (int)(getAxisSteps_per_mm(Z) / 10));
+            //setZOffset_mm(getZOffset_mm() + 0.1);
             RTS_SndData(getZOffset_mm() * 100, 0x1026);
             char zOffs[20], tmp1[11];
             sprintf_P(zOffs, PSTR("Z Offset : %s"), dtostrf(getZOffset_mm(), 1, 3, tmp1));
@@ -1192,8 +1195,10 @@ SERIAL_ECHOLN(PSTR("BeginSwitch"));
         {
           if (WITHIN((getZOffset_mm() - 0.1), Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX))
           {
-            babystepAxis_steps(-40, (axis_t)Z);
-            setZOffset_mm(getZOffset_mm() - 0.1);
+            smartAdjustAxis_steps(((getAxisSteps_per_mm(Z) / 10) * -1), (axis_t)Z, false);
+            //SERIAL_ECHOLNPAIR("Babystep Neg Steps : ", (int)((getAxisSteps_per_mm(Z) / 10) * -1));
+            //babystepAxis_steps((((int)getAxisSteps_per_mm(Z) / 10) * -1), (axis_t)Z);
+            //setZOffset_mm(getZOffset_mm() - 0.1);
             RTS_SndData(getZOffset_mm() * 100, 0x1026);
             char zOffs[20], tmp1[11];
             sprintf_P(zOffs, PSTR("Z Offset : %s"), dtostrf(getZOffset_mm(), 1, 3, tmp1));
