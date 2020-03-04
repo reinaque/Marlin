@@ -1773,8 +1773,10 @@
 #if ENABLED(SDSUPPORT)
   #if(ENABLED(MachineCR10Orig) || ENABLED(LowMemoryBoard))
     #define BLOCK_BUFFER_SIZE 4 // SD,LCD,Buttons take more memory, block buffer needs to be smaller
-  #else
+  #elif ANY(SKR13, SKR14, SKR14Turbo, SKRPRO11) || DISABLED(EXTENSIBLE_UI)
     #define BLOCK_BUFFER_SIZE 16
+  #else
+    #define BLOCK_BUFFER_SIZE 8
   #endif
 #else
   #define BLOCK_BUFFER_SIZE 16 // maximize block buffer
