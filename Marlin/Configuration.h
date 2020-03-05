@@ -385,7 +385,6 @@
   #define HotendAllMetal
   #if DISABLED(ABL_UBL)
     #define ABL_BI
-    #define POWER_LOSS_RECOVERY
   #endif
   #define SolidBedMounts
 #endif
