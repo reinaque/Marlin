@@ -331,7 +331,7 @@
   #define Z_STOP_PIN 19
 #endif
 
-#if ANY(MachineEnder2, MachineEnder3, MachineEnder5, MachineCR10) && NONE(Melzi_To_SBoardUpgrade, SKR13, SKRPRO11)
+#if ANY(MachineEnder2, MachineEnder3, MachineEnder5, MachineCR10, MachineMini) && NONE(Melzi_To_SBoardUpgrade, SKR13, SKRPRO11)
   #define MachineCR10Orig
 #endif
 
@@ -2698,9 +2698,9 @@
   #define ENDER2_STOCKDISPLAY
 #elif ANY(MachineCR20, MachineCR2020)
   #define MKS_MINI_12864
-#elif NONE(MachineCR10SPro, MachineCRX, MachineEnder5Plus, MachineCR10Max, OrigLCD) || ENABLED(GraphicLCD)
+#elif NONE(MachineCR10SPro, MachineCRX, MachineEnder5Plus, MachineCR10Max, OrigLCD, MachineCR10Orig) || ENABLED(GraphicLCD)
   #define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
-#elif ENABLED(OrigLCD)
+#elif ANY(OrigLCD, MachineCR10Orig)
   #define CR10_STOCKDISPLAY
 #endif
 //
