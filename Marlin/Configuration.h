@@ -347,7 +347,9 @@
   #define DirectDrive
 #endif
 #if ENABLED(PLUS)
-  #define lerdgeFilSensor //Using lerdge filament sensor, which is opposite polarity to stock)
+  #if DISABLED(MachineCR10Orig)
+    #define lerdgeFilSensor //Using lerdge filament sensor, which is opposite polarity to stock)
+  #endif
   #define HotendAllMetal
   #define EZRstruder
   #if DISABLED(ABL_UBL)
@@ -1787,11 +1789,11 @@
     #define Y_MAX_POS 250
     #define ClipClearance 15
   #elif(ANY(MachineEnder4, MachineEnder5))
-    #define X_BED_SIZE 230
-    #define Y_BED_SIZE 225
+    #define X_BED_SIZE 220
+    #define Y_BED_SIZE 220
     #define Z_MAX_POS 300
-    #define X_MAX_POS 220
-    #define Y_MAX_POS 220
+    #define X_MAX_POS 230
+    #define Y_MAX_POS 225
     #define ClipClearance 15
   #elif ENABLED(MachineEnder5Plus)
     #define Y_BED_SIZE 360
@@ -2020,7 +2022,7 @@
   #elif ENABLED(ABL_BI)
     #define AUTO_BED_LEVELING_BILINEAR
   #endif
-#elif DISABLED(OrigLA, MachineCR10Orig)
+#elif !BOTH(OrigLA, MachineCR10Orig)
   #define MESH_BED_LEVELING
 #endif
 /**
