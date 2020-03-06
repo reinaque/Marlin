@@ -39,7 +39,9 @@
 
    Configured with 5015 left wing, right wing ABL sensor (BLTouch or M18) only
 
-   Mosquito assumes E3D Groovemount setup using the above as well
+   Mosquito may be set with either mounting option above and overrides temp sensor and max temp
+   E3D Mounting assumes Groovemount
+   Creality Mounting assumes bolt-on kit
 */
 //#define HotendStock
 //#define HotendE3D
@@ -48,7 +50,7 @@
 //Enable this if you have an all metal hotend capable of 300c
 //#define HotendAllMetal
 
-// Enable this if you used a plug and play creality e3d kit with the Creality thermistor
+// Enable this if you used a plug and play creality e3d or mosquito kit and kept the Creality thermistor
 //#define CrealityThermistor
 
 /*
@@ -356,10 +358,9 @@
     #define ABL_BI
   #endif
   #define ABL_BLTOUCH
-  #define HotendAllMetal
 #endif
 
-#if NONE(HotendStock, HotendE3D, HotendMosquito)
+#if NONE(HotendStock, HotendE3D)
   #define HotendStock
 #endif
 
@@ -904,7 +905,7 @@
   #endif
 #endif
 
-#if ANY(HotendE3D, HotendMosquito)
+#if ENABLED(HotendE3D)
 //E3D v6 Clone with 5050 fan wing at 100% set to 235
 #define  DEFAULT_Kp 23.36
 #define  DEFAULT_Ki 1.99
@@ -1554,7 +1555,7 @@
   #else
     #define NOZZLE_TO_PROBE_OFFSET { -44, -10, 0 }
   #endif
-#elif (ANY(ABL_BLTOUCH, ABL_EZABL,ABL_NCSW) && ANY(HotendE3D, HotendMosquito))
+#elif (ANY(ABL_BLTOUCH, ABL_EZABL,ABL_NCSW) && ANY(HotendE3D))
   #if ENABLED(E3D_DUALFAN_MOUNT)
     #if ENABLED(E3D_PROBEMOUNT_LEFT)
       #define NOZZLE_TO_PROBE_OFFSET { -63, 5, 0 }
