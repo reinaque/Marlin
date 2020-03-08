@@ -2119,7 +2119,7 @@
   //========================= Unified Bed Leveling ============================
   //===========================================================================
   #define MESH_INSET 1
-  #if NONE(MachineCR10SPro, MachineCRX, MachineEnder5Plus, MachineCR10Max, OrigLCD) || ENABLED(GraphicLCD)
+  #if NONE(MachineCR10SPro, MachineCRX, MachineEnder5Plus, MachineCR10Max, MachineEnder4, OrigLCD) || ENABLED(GraphicLCD)
     #define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
   #endif
   #define UBL_MESH_EDIT_MOVES_Z     // Sophisticated users prefer no movement of nozzle
