@@ -26,6 +26,7 @@ Now that we have configured an auto build, we are able to provide quite a few HE
 - Slnt = Creality Silent Board
 - H = E3D Hemera Extruder
 - Melzi Host option disables local SD card to allow more features and buffer for Octoprint control
+- NF = Noise filtering for machines with cable extensions - reduces homing accuracy!
 
 ## Primary notes for DW6
 - Power Loss Recovery is functional again
