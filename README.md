@@ -25,6 +25,8 @@ Now that we have configured an auto build, we are able to provide quite a few HE
 - Fil = FilamentRunout
 - Slnt = Creality Silent Board
 - H = E3D Hemera Extruder
+- MC = Mosquito Creality mount
+- ME = Mosquito E3D mount
 - Melzi Host option disables local SD card to allow more features and buffer for Octoprint control
 - NF = Noise filtering for machines with cable extensions - reduces homing accuracy!
 
@@ -34,6 +36,8 @@ Now that we have configured an auto build, we are able to provide quite a few HE
 - Added screen for Step/mm and probe offset editing
 - Base bumped to Marlin 2.0.4.4
 - Tweaks to limit RAM consumption where possible
+
+The default build button is now a batch Build All! If you want to build a custom stock 2560 environment, use the env:megaatmega2560 environment. For SKR boards use the LPC1768/9 environments as usual.
 
 ## About Our Branches
 
