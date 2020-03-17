@@ -1033,7 +1033,9 @@
   #define LCD_TIMEOUT_TO_STATUS 15000
 
   // Add an 'M73' G-code to set the current percentage
-  #define LCD_SET_PROGRESS_MANUALLY
+  #if DISABLED(MachineEnder4) || ENABLED(GraphicLCD)
+    #define LCD_SET_PROGRESS_MANUALLY
+  #endif
 #endif
 // Show the E position (filament used) during printing
 //#define LCD_SHOW_E_TOTAL
